@@ -2,8 +2,6 @@
 # CPSC 452 Hurricane Trajectory Prediction
 #
 # Purpose: This program downloads and cleans the HURDAT2 dataset.
-# First, the user must download the HURDAT .txt file off the web
-# and convert it to .csv format before running this code.
 
 import csv
 
@@ -16,34 +14,32 @@ def download_write_HURDAT(input_file, output_file):
         writer = csv.writer(outfile)
         
         # Write the header row with the new column labels
-        writer.writerow(['ID', 'hurricane_name', 'year', 'full_date', 'time_index', 'lat_center', 'long_center', 'wind_speed'])
+        writer.writerow(['name', 'year', 'month', 'day', 'hour', 'lat', 'long', 'wind', 'pressure'])
         
         # Process each row in the input file
         for row in reader:
-            # Extract the ID and hurricane name and assign to each row
-            if row[5].strip() == '':  # Check if the fifth column is empty
-                ID = row[0]
-                hurr_name = row[1]
-                continue
-            else:
-                # Process the rows under this label and name
-                year = str(row[0])[:4]
-                full_time = row[0]
-                time_index = row[1]
-                lat_center = row[4]
-                long_center = row[5]
-                wind_speed = row[6]
+            name = row[1]
+            year = row[2]
+            month = row[3]
+            day = row[4]
+            hour = row[5]
+            lat = row[6]
+            long = row[7]
+            wind = row[10]
+            pressure = row[11]
                 
-                # Write the processed row to the output file
-                writer.writerow([ID, hurr_name, year, full_time, time_index, lat_center, long_center, wind_speed])
+            # Write the processed row to the output file
+            writer.writerow([name, year, month, day, hour, lat, long, wind, pressure])
 
 # Uncleaned HURDAT2 data
-uncleaned_HURDAT2 = "HURDAT2_ucdata.csv"
+uncleaned_HURDAT2 = "storms.csv"
 
 # Final cleaned HURDAT2 data
 cleaned_HURDAT2 = "HURDAT2_final.csv"
 
 # Function call to download and clean HURDAT2
 download_write_HURDAT(uncleaned_HURDAT2, cleaned_HURDAT2)
+
+print("HURDAT2 data has been cleaned and written to HURDAT2_final.csv")
 
 
