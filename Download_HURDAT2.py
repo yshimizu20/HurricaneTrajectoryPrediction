@@ -13,9 +13,6 @@ def download_write_HURDAT(input_file, output_file):
         reader = csv.reader(csvfile)
         writer = csv.writer(outfile)
         
-        # Write the header row with the new column labels
-        writer.writerow(['name', 'year', 'month', 'day', 'hour', 'lat', 'long', 'wind', 'pressure'])
-        
         # Process each row in the input file
         for row in reader:
             name = row[1]
