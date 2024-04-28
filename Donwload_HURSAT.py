@@ -1,10 +1,12 @@
-# CPSC 452 Hurricane Trajectory Prediction
-# Assembled by Mike Zhang
-#
-# Purpose: This program downloads the HURSAT dataset.
-# This function is inspired by code from the following github.
-# However, I have added components necessary to the functioning of our specific data.
-# https://github.com/23ccozad/hurricane-wind-speed-cnn/blob/master/download.py
+'''
+CPSC 452 Hurricane Trajectory Prediction
+Assembled by Mike Zhang
+
+Purpose: This program downloads the HURSAT dataset.
+This function is inspired by code from the following github.
+However, I have added components necessary to the functioning of our specific data.
+https://github.com/23ccozad/hurricane-wind-speed-cnn/blob/master/download.py
+'''
 
 import os
 import pandas as pd
