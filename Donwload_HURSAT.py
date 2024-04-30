@@ -114,10 +114,11 @@ def print_progress(action, progress, total):
 
 if __name__ == "__main__":
     # List of years to download
-    YEARS_TO_DOWNLOAD = ['2016']
+    #YEARS_TO_DOWNLOAD = ['2016']
 
     # Create a list from 1978 to 2016
-    # YEARS_TO_DOWNLOAD = [str(year) for year in range(1978, 2017)]
+    # YEARS_TO_DOWNLOAD = [str(year) for year in range(1978, 2016)]
+    YEARS_TO_DOWNLOAD = [str(year) for year in range(2002, 2016)]
 
     download_hursat(YEARS_TO_DOWNLOAD)
     

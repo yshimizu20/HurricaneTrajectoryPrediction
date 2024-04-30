@@ -1,7 +1,7 @@
 '''CPSC 452 Hurricane Trajectory Prediction
 Written by Mike Zhang
 
-Purpose: This model trains the CNN to predict windspeed from satellite images.
+Purpose: This program trains the CNN to predict windspeed from satellite images.
 The idea is that we will pre-train embeddings of satellite images, which we 
 will then concatenate with non-image data during training of the Neural ODE.
 '''
@@ -19,6 +19,7 @@ import torchvision.transforms as tfs
 
 from pathlib import Path
 import matplotlib.pyplot as plt
+import json
 
 import netCDF4 as nc
 import pandas as pd
@@ -75,13 +76,13 @@ class HURSATDataset(Dataset):
             (self.track_data.hour*100 == time)
         ]
 
-        # Get wind speed from matching row
+        # Get wind speed, pressure, long, and lat from matching row
         try:
             wind_speed = matching_track_data.wind.reset_index(drop=True)[0]
         except Exception:
             date = int(file_name_parts[2] + file_name_parts[3] + file_name_parts[4])
             print('\rCould not find label for image of ' + refined_name + ' at date ' + str(date) + ' and time ' + str(time))
-            return None, None  # Return None for image and label if wind speed not found
+            return None, None  # Return None for image and label if wind speed or pressure not found
 
         if self.transform:
             image = self.transform(image)
@@ -102,10 +103,7 @@ desired_image_size = (256, 256)
 
 transform = tfs.Compose([
     tfs.Resize(desired_image_size),
-    tfs.RandomResizedCrop(desired_image_size,
-                         scale=(0.6,1.6)),
-    tfs.RandomHorizontalFlip(p=0.5),
-    tfs.ToTensor(),
+    tfs.ToTensor()
 ])
 
 # Initialize dataset
@@ -132,7 +130,7 @@ train_images, test_images = images[:train_size], images[train_size:]
 train_labels, test_labels = labels[:train_size], labels[train_size:]
 
 # Batch size
-batch_size = 16
+batch_size = 64
 
 # Convert images and labels to PyTorch tensors
 train_images_tensor = torch.tensor(train_images)
@@ -144,28 +142,32 @@ test_labels_tensor = torch.tensor(test_labels)
 train_dataset = TensorDataset(train_images_tensor, train_labels_tensor)
 test_dataset = TensorDataset(test_images_tensor, test_labels_tensor)
 
+# Check for GPU
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # DataLoader for training set
 train_loader = DataLoader(train_dataset,
                           batch_size=batch_size,
                           shuffle=True,  
-                          num_workers=0)  # Adjust based on available CPU cores
+                          num_workers=2)  # Adjust based on available CPU cores
 
 # DataLoader for testing set
 test_loader = DataLoader(test_dataset,
                          batch_size=batch_size,
                          shuffle=False,  
-                         num_workers=0)  # Adjust based on available CPU cores
+                         num_workers=2)  # Adjust based on available CPU cores
 
 '''Training Step'''
 # Define your neural network
 model = CNN()
+model.to(device)
 
 # Definte loss and optimizer
 criterion = nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-6)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-6, weight_decay=0.0001)
 
 # Define number of epochs
-num_epochs = 20
+num_epochs = 40
 
 # Training loop
 for epoch in range(num_epochs):
@@ -175,6 +177,8 @@ for epoch in range(num_epochs):
     
     # Training phase
     for inputs, labels in train_loader:
+        inputs = inputs.to(device)
+        labels = labels.to(device)
         optimizer.zero_grad()
         outputs = model(inputs)
         outputs = outputs.squeeze()
@@ -190,6 +194,8 @@ for epoch in range(num_epochs):
     model.eval()  # Set the model to evaluation mode
     with torch.no_grad():
         for inputs, labels in test_loader:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
             outputs = model(inputs)
             outputs = outputs.squeeze()
             loss = criterion(outputs, labels.float())
@@ -200,3 +206,16 @@ for epoch in range(num_epochs):
     
     # Print average losses for training and test datasets
     print(f"Epoch [{epoch+1}/{num_epochs}], Train Loss: {epoch_train_loss:.4f}, Test Loss: {epoch_test_loss:.4f}")
+    
+# Create path to save model parameters
+SAVE_DIR = Path('.').expanduser().absolute()
+MODELS_DIR = SAVE_DIR / 'models'
+PRE_CNN_DIR = MODELS_DIR / 'pretrain_CNN_params.pth'
+
+# Save model
+if not MODELS_DIR.is_dir():
+    MODELS_DIR.mkdir(exist_ok=True)
+    
+torch.save(model.state_dict(), str(PRE_CNN_DIR))
+
+
