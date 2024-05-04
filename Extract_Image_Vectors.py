@@ -1,9 +1,9 @@
-'''CPSC 452 Hurricane Trajectory Prediction
+"""CPSC 452 Hurricane Trajectory Prediction
 Written by Mike Zhang
 
 Purpose: This program takes the pre-trained form of the satellite images
 in embedding form.
-'''
+"""
 
 import torch
 import torchvision.transforms as tfs
@@ -13,7 +13,7 @@ import sys
 
 from pathlib import Path
 
-from model import CNN 
+from model import CNN
 
 import netCDF4 as nc
 import pandas as pd
@@ -22,6 +22,7 @@ import os
 import netCDF4
 from PIL import Image
 from datetime import datetime
+
 
 # -----------------------Define Class and Functions to Handle Vector Info---------------------
 class HURSATVector(Dataset):
@@ -35,7 +36,9 @@ class HURSATVector(Dataset):
         self.num_files = len(self.files)
 
         # Create a mapping between storm names and numerical identifiers
-        self._storm_name_to_id_temp = {name: idx for idx, name in enumerate(sorted(set(self.track_data['name'])))}
+        self._storm_name_to_id_temp = {
+            name: idx for idx, name in enumerate(sorted(set(self.track_data["name"])))
+        }
 
         self.storm_name_to_id = {}
 
@@ -44,20 +47,25 @@ class HURSATVector(Dataset):
 
     def get_reference_date(self, track_data, storm_name):
         # Filter track_data for the given storm_name and create a copy
-        storm_data = self.track_data[self.track_data['name'] == storm_name].copy()
+        storm_data = self.track_data[self.track_data["name"] == storm_name].copy()
 
         # Concatenate year, month, day, and hour into a single numeric value
-        storm_data.loc[:, 'timestamp'] = storm_data['year'] * 1000000 + storm_data['month'] * 10000 + storm_data['day'] * 100 + storm_data['hour']
+        storm_data.loc[:, "timestamp"] = (
+            storm_data["year"] * 1000000
+            + storm_data["month"] * 10000
+            + storm_data["day"] * 100
+            + storm_data["hour"]
+        )
 
         # Find the row with the minimum timestamp
-        earliest_timestamp_row = storm_data.loc[storm_data['timestamp'].idxmin()]
+        earliest_timestamp_row = storm_data.loc[storm_data["timestamp"].idxmin()]
 
         # Assemble the reference date from the row with the minimum timestamp
         reference_date = datetime(
-            earliest_timestamp_row['year'],
-            earliest_timestamp_row['month'],
-            earliest_timestamp_row['day'],
-            earliest_timestamp_row['hour']
+            earliest_timestamp_row["year"],
+            earliest_timestamp_row["month"],
+            earliest_timestamp_row["day"],
+            earliest_timestamp_row["hour"],
         )
 
         return reference_date
@@ -68,28 +76,28 @@ class HURSATVector(Dataset):
 
         # Load image data from NetCDF file
         raw_data = nc.Dataset(file_path)
-        image = raw_data.variables['IRWIN'][0]
+        image = raw_data.variables["IRWIN"][0]
         image_np = np.array(image)
         image = Image.fromarray(image_np)
         # image is 301 x 301
 
         # Extract storm name, date, and time from file name
         file_name = os.path.basename(file_path)
-        file_name_parts = file_name.split('.')
+        file_name_parts = file_name.split(".")
         storm_name = file_name_parts[1]
         refined_name = storm_name[0] + storm_name[1:].lower()
         storm_year = int(file_name_parts[2])
-        storm_month  = int(file_name_parts[3])
+        storm_month = int(file_name_parts[3])
         storm_day = int(file_name_parts[4])
-        time = int(file_name_parts[5])/100
+        time = int(file_name_parts[5]) / 100
 
         # Filter best track data to find matching row
         matching_track_data = self.track_data.loc[
-            (self.track_data.name == refined_name) &
-            (self.track_data.year == storm_year) &
-            (self.track_data.month == storm_month) &
-            (self.track_data.day == storm_day) &
-            (self.track_data.hour == int(time))
+            (self.track_data.name == refined_name)
+            & (self.track_data.year == storm_year)
+            & (self.track_data.month == storm_month)
+            & (self.track_data.day == storm_day)
+            & (self.track_data.hour == int(time))
         ]
 
         # Get wind speed, pressure, long, and lat from matching row
@@ -100,8 +108,18 @@ class HURSATVector(Dataset):
             long = matching_track_data.long.reset_index(drop=True)[0]
         except Exception:
             date = int(file_name_parts[2] + file_name_parts[3] + file_name_parts[4])
-            print('\rCould not find label for image of ' + refined_name + ' at date ' + str(date) + ' and time ' + str(time))
-            return None, None  # Return None for image and label if wind speed or pressure not found
+            print(
+                "\rCould not find label for image of "
+                + refined_name
+                + " at date "
+                + str(date)
+                + " and time "
+                + str(time)
+            )
+            return (
+                None,
+                None,
+            )  # Return None for image and label if wind speed or pressure not found
 
         # Convert to numerical values
         lat = int(lat)
@@ -119,24 +137,30 @@ class HURSATVector(Dataset):
         # Convert date to a normalized timestamp in 6-hour intervals
         date_str = f"{storm_year}-{storm_month:02d}-{storm_day:02d}-{int(time):02d}"  # Format: YYYY-MM-DD-HH
         date_obj = datetime.strptime(date_str, "%Y-%m-%d-%H")
-        time_diff = (date_obj - reference_date).total_seconds()#  / (6 * 3600)  # Calculate time difference in 6-hour intervals
+        time_diff = (
+            date_obj - reference_date
+        ).total_seconds()  #  / (6 * 3600)  # Calculate time difference in 6-hour intervals
         timestamp = int(time_diff)
 
         # Create label containing all relevant information
-        label = np.array([storm_id, timestamp, long, lat, wind_speed, pressure], dtype=np.float32)
+        label = np.array(
+            [storm_id, timestamp, long, lat, wind_speed, pressure], dtype=np.float32
+        )
 
         if self.transform:
             image = self.transform(image)
 
         return image, label
 
+
 # -------------------------Define ncessary function and folders---------------------
 # Set path to save CNN parameters and vectors
-SAVE_DIR = Path('.').expanduser().absolute()
-MODELS_DIR = SAVE_DIR / 'models'
-PRE_CNN_DIR = MODELS_DIR / 'pretrain_CNN_params.pth'
-VECTOR_REPS_DIR = SAVE_DIR / 'vectorized_representations.pth'
-JSON_DIR = SAVE_DIR / 'HURDAT2_final.json'
+SAVE_DIR = Path(".").expanduser().absolute()
+MODELS_DIR = SAVE_DIR / "models"
+PRE_CNN_DIR = MODELS_DIR / "pretrain_CNN_params.pth"
+VECTOR_REPS_DIR = SAVE_DIR / "vectorized_representations.pth"
+JSON_DIR = SAVE_DIR / "HURDAT2_final.json"
+
 
 # Function to extract vectorized representations from the trained model
 def extract_vectorized_representations(model, data_loader):
@@ -148,7 +172,7 @@ def extract_vectorized_representations(model, data_loader):
             inputs = inputs.to(device)
             inputs = inputs.unsqueeze(1)
             vector_rep = model(inputs, return_vector=True).cpu().numpy()
-            
+
             # Concatenate vector representation with label values
             concatenated_sample = np.concatenate((batch_labels, vector_rep), axis=1)
             concatenated_data.append(concatenated_sample)
@@ -157,6 +181,7 @@ def extract_vectorized_representations(model, data_loader):
     concatenated_data_array = np.vstack(concatenated_data)
 
     return concatenated_data_array
+
 
 # -------------------------Conversion Step---------------------
 # Set device
@@ -171,9 +196,7 @@ root_dir = SAVE_DIR / "HURSAT_Imagery"
 # Define transforms
 desired_image_size = (256, 256)
 
-transform = tfs.Compose([
-    tfs.Resize(desired_image_size)
-])
+transform = tfs.Compose([tfs.Resize(desired_image_size)])
 
 # Initialize dataset
 HURSAT_vectors = HURSATVector(root_dir, HURDAT2_data, transform=transform)
@@ -211,7 +234,9 @@ torch.save(vectorized_reps, VECTOR_REPS_DIR)
 print("Vectorized representations saved successfully.")
 
 # Save HURSAT_vectors.storm_name_to_id to a JSON file
-HURSAT_vectors.storm_name_to_id = {k: int(v) for k, v in HURSAT_vectors.storm_name_to_id.items()}
+HURSAT_vectors.storm_name_to_id = {
+    k: int(v) for k, v in HURSAT_vectors.storm_name_to_id.items()
+}
 pd.Series(HURSAT_vectors.storm_name_to_id).to_json(JSON_DIR)
 
 # # code to recover the dictionary
