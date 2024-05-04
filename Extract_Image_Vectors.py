@@ -20,8 +20,9 @@ import numpy as np
 import os
 import netCDF4
 from PIL import Image
+from datetime import datetime
 
-#-----------------------Define Class to Store Non-Image Info---------------------
+#-----------------------Define Class and Functions to Handle Vector Info---------------------
 class HURSATVector(Dataset):
     def __init__(self, root_dir, track_data, transform=None):
         self.root_dir = root_dir
@@ -32,8 +33,31 @@ class HURSATVector(Dataset):
         self.files = os.listdir(root_dir)
         self.num_files = len(self.files)
 
+        # Create a mapping between storm names and numerical identifiers
+        self.storm_name_to_id = {name: idx for idx, name in enumerate(sorted(set(self.track_data['name'])))}
+
     def __len__(self):
         return len(self.files)
+
+    def get_reference_date(self, track_data, storm_name):
+        # Filter track_data for the given storm_name and create a copy
+        storm_data = self.track_data[self.track_data['name'] == storm_name].copy()
+
+        # Concatenate year, month, day, and hour into a single numeric value
+        storm_data.loc[:, 'timestamp'] = storm_data['year'] * 1000000 + storm_data['month'] * 10000 + storm_data['day'] * 100 + storm_data['hour']
+
+        # Find the row with the minimum timestamp
+        earliest_timestamp_row = storm_data.loc[storm_data['timestamp'].idxmin()]
+
+        # Assemble the reference date from the row with the minimum timestamp
+        reference_date = datetime(
+            earliest_timestamp_row['year'],
+            earliest_timestamp_row['month'],
+            earliest_timestamp_row['day'],
+            earliest_timestamp_row['hour']
+        )
+
+        return reference_date
 
     def __getitem__(self, idx):
         file_name = self.files[idx]
@@ -54,7 +78,7 @@ class HURSATVector(Dataset):
         storm_year = int(file_name_parts[2])
         storm_month  = int(file_name_parts[3])
         storm_day = int(file_name_parts[4])
-        time = int(file_name_parts[5])
+        time = int(file_name_parts[5])/100
 
         # Filter best track data to find matching row
         matching_track_data = self.track_data.loc[
@@ -62,7 +86,7 @@ class HURSATVector(Dataset):
             (self.track_data.year == storm_year) &
             (self.track_data.month == storm_month) &
             (self.track_data.day == storm_day) &
-            (self.track_data.hour*100 == time)
+            (self.track_data.hour == int(time))
         ]
 
         # Get wind speed, pressure, long, and lat from matching row
@@ -82,8 +106,20 @@ class HURSATVector(Dataset):
         wind_speed = int(wind_speed)
         pressure = int(pressure)
 
+        # Convert storm_name to its corresponding numerical identifier
+        storm_id = self.storm_name_to_id[refined_name]
+
+        # Get the reference date for normalization from track_data
+        reference_date = self.get_reference_date(self.track_data, refined_name)
+
+        # Convert date to a normalized timestamp in 6-hour intervals
+        date_str = f"{storm_year}-{storm_month:02d}-{storm_day:02d}-{int(time):02d}"  # Format: YYYY-MM-DD-HH
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d-%H")
+        time_diff = (date_obj - reference_date).total_seconds()#  / (6 * 3600)  # Calculate time difference in 6-hour intervals
+        timestamp = int(time_diff)
+
         # Create label containing all relevant information
-        label = np.array([long, lat, wind_speed, pressure], dtype=np.float32)
+        label = np.array([storm_id, timestamp, long, lat, wind_speed, pressure], dtype=np.float32)
 
         if self.transform:
             image = self.transform(image)
