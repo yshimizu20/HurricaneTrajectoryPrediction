@@ -26,20 +26,6 @@ JSON_DIR = SAVE_DIR / "HURDAT2_final.json"
 # Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Define NDE Model
-"""
-Input is size 38: id, datetime, long, lat, wind, pressure, 
-and 32 vectorized image features
-Hidden features size: 10
-Output features sizel: 2 (long and lat)
-"""
-model = NeuralODE(FlowNet(36), sensitivity="adjoint", solver="dopri5").to(device)
-
-"""
-Hurricanes last 10 days. That's 40 6-hour periods.
-"""
-t_span = torch.linspace(0, 1, 40)
-
 # Load data and print first 5 elements
 """Format:
 First Column: longitude
@@ -102,8 +88,20 @@ for d in test_tensors:
 train_loader = CustomDataLoader(training_tensors)
 test_loader = CustomDataLoader(test_tensors, shuffle=False)
 
+# Define NDE Model
+"""
+Input is size 36: long, lat, wind, pressure, 
+and 32 vectorized image features
+Hidden features size: 10
+Output features sizel: 2 (long and lat)
+"""
 model = NeuralODE(FlowNet(36), sensitivity="adjoint", solver="dopri5").to(device)
 optimizer = optim.Adam(model.parameters(), lr=0.01)
+
+"""
+Hurricanes last 10 days. That's 40 6-hour periods.
+"""
+t_span = torch.linspace(0, 1, 40)
 
 
 # Define the training function
@@ -124,8 +122,12 @@ def train(model, device, train_loader, optimizer, num_epochs):
             loss.backward()
             optimizer.step()
             total_loss += loss.item()
-            if batch_idx % 100 == 0:
-                print(f"Epoch {epoch}, Batch {batch_idx}, Loss {loss.item()}")
+        
+        if epoch % 5 == 0:
+            # run test and save model
+            test(model, device, test_loader)
+            torch.save(model.state_dict(), f"saved_models/model_{epoch}.pth")
+
         print(f"Epoch {epoch}, Average Loss {total_loss / len(train_loader)}")
 
 
@@ -148,5 +150,5 @@ def test(model, device, test_loader):
 
 
 # Training and testing the model
-train(model, device, train_loader, optimizer, num_epochs=20)
+train(model, device, train_loader, optimizer, num_epochs=100)
 test(model, device, test_loader)
