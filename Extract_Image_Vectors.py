@@ -9,6 +9,7 @@ import torch
 import torchvision.transforms as tfs
 from torch.utils.data import TensorDataset
 from torch.utils.data import DataLoader, Dataset
+import sys
 
 from pathlib import Path
 
@@ -22,7 +23,7 @@ import netCDF4
 from PIL import Image
 from datetime import datetime
 
-#-----------------------Define Class and Functions to Handle Vector Info---------------------
+# -----------------------Define Class and Functions to Handle Vector Info---------------------
 class HURSATVector(Dataset):
     def __init__(self, root_dir, track_data, transform=None):
         self.root_dir = root_dir
@@ -30,11 +31,13 @@ class HURSATVector(Dataset):
         self.transform = transform
 
         # Get list of file names
-        self.files = os.listdir(root_dir)
+        self.files = sorted(os.listdir(root_dir))
         self.num_files = len(self.files)
 
         # Create a mapping between storm names and numerical identifiers
-        self.storm_name_to_id = {name: idx for idx, name in enumerate(sorted(set(self.track_data['name'])))}
+        self._storm_name_to_id_temp = {name: idx for idx, name in enumerate(sorted(set(self.track_data['name'])))}
+
+        self.storm_name_to_id = {}
 
     def __len__(self):
         return len(self.files)
@@ -62,14 +65,14 @@ class HURSATVector(Dataset):
     def __getitem__(self, idx):
         file_name = self.files[idx]
         file_path = os.path.join(self.root_dir, file_name)
-        
+
         # Load image data from NetCDF file
         raw_data = nc.Dataset(file_path)
         image = raw_data.variables['IRWIN'][0]
         image_np = np.array(image)
         image = Image.fromarray(image_np)
         # image is 301 x 301
-        
+
         # Extract storm name, date, and time from file name
         file_name = os.path.basename(file_path)
         file_name_parts = file_name.split('.')
@@ -107,7 +110,8 @@ class HURSATVector(Dataset):
         pressure = int(pressure)
 
         # Convert storm_name to its corresponding numerical identifier
-        storm_id = self.storm_name_to_id[refined_name]
+        storm_id = self._storm_name_to_id_temp[refined_name]
+        self.storm_name_to_id[refined_name] = storm_id
 
         # Get the reference date for normalization from track_data
         reference_date = self.get_reference_date(self.track_data, refined_name)
@@ -126,12 +130,13 @@ class HURSATVector(Dataset):
 
         return image, label
 
-#-------------------------Define ncessary function and folders---------------------
+# -------------------------Define ncessary function and folders---------------------
 # Set path to save CNN parameters and vectors
 SAVE_DIR = Path('.').expanduser().absolute()
 MODELS_DIR = SAVE_DIR / 'models'
 PRE_CNN_DIR = MODELS_DIR / 'pretrain_CNN_params.pth'
 VECTOR_REPS_DIR = SAVE_DIR / 'vectorized_representations.pth'
+JSON_DIR = SAVE_DIR / 'HURDAT2_final.json'
 
 # Function to extract vectorized representations from the trained model
 def extract_vectorized_representations(model, data_loader):
@@ -153,8 +158,8 @@ def extract_vectorized_representations(model, data_loader):
 
     return concatenated_data_array
 
-#-------------------------Conversion Step---------------------
-# Set device 
+# -------------------------Conversion Step---------------------
+# Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load your dataset
@@ -173,12 +178,12 @@ transform = tfs.Compose([
 # Initialize dataset
 HURSAT_vectors = HURSATVector(root_dir, HURDAT2_data, transform=transform)
 
-# Set device 
+# Set device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load your pre-trained model
 model = CNN()
-model.load_state_dict(torch.load(PRE_CNN_DIR))
+model.load_state_dict(torch.load(PRE_CNN_DIR, map_location=device))
 model.to(device)
 
 # Filter out None values from the dataset
@@ -205,3 +210,12 @@ vectorized_reps = extract_vectorized_representations(model, data_loader)
 torch.save(vectorized_reps, VECTOR_REPS_DIR)
 print("Vectorized representations saved successfully.")
 
+# Save HURSAT_vectors.storm_name_to_id to a JSON file
+HURSAT_vectors.storm_name_to_id = {k: int(v) for k, v in HURSAT_vectors.storm_name_to_id.items()}
+pd.Series(HURSAT_vectors.storm_name_to_id).to_json(JSON_DIR)
+
+# # code to recover the dictionary
+# with open(JSON_DIR, 'r') as f:
+#     storm_name_to_id = pd.read_json(f, typ='series').to_dict()
+
+# print(storm_name_to_id)
