@@ -11,6 +11,7 @@ import torch.optim as optim
 from torchdyn.core import NeuralODE
 import json
 from collections import defaultdict
+import math
 
 from pathlib import Path
 
@@ -98,55 +99,208 @@ def prepare_data():
 
     return train_loader, test_loader
 
-"""
-Hurricanes last 10 days. That's 40 6-hour periods.
-"""
-t_span = torch.linspace(0, 1, 40)
+
+t_span_full = torch.linspace(0, 1, 40)
 
 
 # Define the training function
-def train(model, device, train_loader, optimizer, num_epochs):
+def train(
+    model,
+    device,
+    train_loader,
+    test_loader,
+    optimizer,
+    scheduler,
+    num_epochs,
+    log_path=None,
+    eval_metric="one_run",
+):
     model.train()
     for epoch in range(num_epochs):
         total_loss = 0
+
         for batch_idx, (x, y) in enumerate(train_loader):
             x, y = x.to(device), y.to(device)
+            t_span = t_span_full[:x.shape[0]]
             optimizer.zero_grad()
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
-            y_hat = y_hat[-1]  # get the last output
-            predicted_longitude = y_hat[:, 34]
-            predicted_latitude = y_hat[:, 35]
-            loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
-            loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
-            loss = loss_longitude + loss_latitude
-            loss.backward()
-            optimizer.step()
-            total_loss += loss.item()
-        
+
+            loss = 0
+
+            if "one_run" in eval_metric.split(" "):
+                predicted_longitude = y_hat[:, 0, 34]
+                predicted_latitude = y_hat[:, 0, 35]
+
+                # Compute MSE losses
+                loss_longitude = nn.MSELoss()(predicted_longitude, y[:40, 0])
+                loss_latitude = nn.MSELoss()(predicted_latitude, y[:40, 1])
+
+                loss = loss_longitude + loss_latitude
+
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+            if "one_run_with_discount" in eval_metric.split(" "):
+                predicted_longitude = y_hat[:, 0, 34]
+                predicted_latitude = y_hat[:, 0, 35]
+
+                discount_factor = 0.98
+                discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T.to(device)
+
+                # calculate loss and apply discount factor
+                weighted_loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[:40, 0]) * discount_matrix
+                weighted_loss_latitude = (nn.MSELoss(reduction="none")(predicted_latitude, y[:40, 1]) * discount_matrix)
+
+                loss_longitude = torch.mean(weighted_loss_longitude)
+                loss_latitude = torch.mean(weighted_loss_latitude)
+
+                loss = loss_longitude + loss_latitude
+
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+            if "all" in eval_metric.split(" "):
+                loss = 0
+                for i in range(1, len(y_hat)):
+                    predicted_longitude = y_hat[i, :x.shape[0] - i, 34]
+                    predicted_latitude = y_hat[i, :x.shape[0] - i, 35]
+
+                    loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[i:, 0])
+                    loss_latitude = nn.MSELoss(reduction="none")(
+                        predicted_latitude, y[i:, 1]
+                    )
+
+                    loss_longitude = torch.sum(loss_longitude)
+                    loss_latitude = torch.sum(loss_latitude)
+
+                    loss += loss_longitude + loss_latitude
+
+                loss /= (x.shape[0] ** 1.5)
+
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+            if "all_with_discount" in eval_metric.split(" "):
+                loss = 0
+                discount_factor = 0.98
+                discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T.to(device)
+
+                for i in range(1, len(y_hat)):
+                    predicted_longitude = y_hat[i, :x.shape[0] - i, 34]
+                    predicted_latitude = y_hat[i, :x.shape[0] - i, 35]
+
+                    weighted_loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[i:, 0]) * discount_matrix[i:]
+                    weighted_loss_latitude = nn.MSELoss(reduction="none")(predicted_latitude, y[i:, 1]) * discount_matrix[i:]
+
+                    loss_longitude = torch.sum(weighted_loss_longitude)
+                    loss_latitude = torch.sum(weighted_loss_latitude)
+
+                    loss += loss_longitude + loss_latitude
+
+                loss /= (x.shape[0] ** 1.5)
+
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+            if "next_only" in eval_metric.split(" "):
+                try:
+                    predicted_longitude = y_hat[1, :x.shape[0] - 1, 34]
+                    predicted_latitude = y_hat[1, :x.shape[0] - 1, 35]
+                except Exception as e:
+                    continue
+
+                loss_longitude = nn.MSELoss()(predicted_longitude, y[1:, 0])
+                loss_latitude = nn.MSELoss()(predicted_latitude, y[1:, 1])
+
+                loss = loss_longitude + loss_latitude
+
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+        if log_path is not None:
+            with open(log_path, "a") as f:
+                f.write(f"Epoch {epoch}, Average Loss {total_loss / len(train_loader)}\n")
+        else:
+            print(f"Epoch {epoch}, Average Loss {total_loss / len(train_loader)}")
+
+        scheduler.step()
+
         if epoch % 5 == 0:
             # run test and save model
-            test(model, device, test_loader)
-            torch.save(model.state_dict(), f"saved_models/model_{epoch}.pth")
-
-        print(f"Epoch {epoch}, Average Loss {total_loss / len(train_loader)}")
+            test(model, device, test_loader, log_path)
+            # torch.save(model.state_dict(), f"saved_models/model_{epoch}.pth")
 
 
 # Define the testing function
-def test(model, device, test_loader):
+def test(model, device, test_loader, log_path=None):
     model.eval()
-    total_loss = 0
+
+    total_loss_one_run = 0
+    total_loss_all = 0
+    total_loss_next_only = 0
+
     with torch.no_grad():
         for x, y in test_loader:
             x, y = x.to(device), y.to(device)
+            t_span = t_span_full[:x.shape[0]]
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
-            y_hat = y_hat[-1]  # get the last output
-            predicted_longitude = y_hat[:, 34]
-            predicted_latitude = y_hat[:, 35]
-            loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
-            loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
+
+            # deal with one_run
+            predicted_longitude = y_hat[:, 0, 34]
+            predicted_latitude = y_hat[:, 0, 35]
+
+            loss_longitude = nn.MSELoss()(predicted_longitude, y[:40, 0])
+            loss_latitude = nn.MSELoss()(predicted_latitude, y[:40, 1])
+
             loss = loss_longitude + loss_latitude
-            total_loss += loss.item()
-    print(f"Test Loss: {total_loss / len(test_loader)}")
+
+            total_loss_one_run += loss.item()
+
+            # deal with all
+            loss = 0
+            for i in range(1, len(y_hat)):
+                predicted_longitude = y_hat[i, :x.shape[0] - i, 34]
+                predicted_latitude = y_hat[i, :x.shape[0] - i, 35]
+
+                loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[i:, 0])
+                loss_latitude = nn.MSELoss(reduction="none")(predicted_latitude, y[i:, 1])
+
+                loss_longitude = torch.sum(loss_longitude)
+                loss_latitude = torch.sum(loss_latitude)
+
+                loss += loss_longitude + loss_latitude
+                
+            loss /= (x.shape[0] ** 1.5)
+            total_loss_all += loss.item()
+
+            # deal with next_only
+            try:
+                predicted_longitude = y_hat[1, :x.shape[0] - 1, 34]
+                predicted_latitude = y_hat[1, :x.shape[0] - 1, 35]
+            except Exception as e:
+                continue
+
+            loss_longitude = nn.MSELoss()(predicted_longitude, y[1:, 0])
+            loss_latitude = nn.MSELoss()(predicted_latitude, y[1:, 1])
+
+            loss = loss_longitude + loss_latitude
+
+            total_loss_next_only += loss.item()
+    
+    if log_path is not None:
+        with open(log_path, "a") as f:
+            f.write(f"Test Loss one_run: {total_loss_one_run / len(test_loader)}\n")
+            f.write(f"Test Loss all: {total_loss_all / len(test_loader)}\n")
+            f.write(f"Test Loss next_only: {total_loss_next_only / len(test_loader)}\n")
+    else:
+        print(f"Test Loss one_run: {total_loss_one_run / len(test_loader)}")
+        print(f"Test Loss all: {total_loss_all / len(test_loader)}")
+        print(f"Test Loss next_only: {total_loss_next_only / len(test_loader)}")
 
 if __name__ == "__main__":
     # Define NDE Model
@@ -157,11 +311,13 @@ if __name__ == "__main__":
     Output features sizel: 2 (long and lat)
     """
     model = NeuralODE(FlowNet(36), sensitivity="adjoint", solver="dopri5").to(device)
-    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    # implement optimizer with lr decay
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.99)
     
     # Prepare data
     train_loader, test_loader = prepare_data()
 
     # Training and testing the model
-    train(model, device, train_loader, optimizer, num_epochs=100)
+    train(model, device, train_loader, test_loader, optimizer, scheduler, num_epochs=400, eval_metric="next_only")
     test(model, device, test_loader)

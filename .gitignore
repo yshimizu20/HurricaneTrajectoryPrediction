@@ -56,7 +56,6 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -162,3 +161,5 @@ cython_debug/
 HURSAT_Imagery/
 lightning_logs/
 saved_models/
+logs/
+logs_old/
