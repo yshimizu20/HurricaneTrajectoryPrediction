@@ -119,7 +119,7 @@ def train(
         total_loss = 0
         for batch_idx, (x, y) in enumerate(train_loader):
             x, y = x.to(device), y.to(device)
-            t_span = t_span_full[:x.shape[0]]
+            t_span = t_span_full[:x.shape[0] - 5]
             optimizer.zero_grad()
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
 
@@ -131,26 +131,18 @@ def train(
                 loss_longitude = nn.MSELoss()(predicted_longitude, y[:40, 0])
                 loss_latitude = nn.MSELoss()(predicted_latitude, y[:40, 1])
 
-                # print(f"y[:, 0]: {y[:, 0]}")
-                # print(f"predicted_longitude: {predicted_longitude}")
-
                 loss = loss_longitude + loss_latitude
 
             elif loss_computation == "one_run_with_discount":
-                y_hat = y_hat[-1]
-                predicted_longitude = y_hat[:, 34]
-                predicted_latitude = y_hat[:, 35]
+                predicted_longitude = y_hat[:, 0, 34]
+                predicted_latitude = y_hat[:, 0, 35]
 
-                discount_factor = 0.99
-                discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T
-                discount_matrix = discount_matrix / discount_matrix.mean()
+                discount_factor = 0.98
+                discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T.to(device)
 
                 # calculate loss and apply discount factor
-                weighted_loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[:, 0]) * discount_matrix
-                weighted_loss_latitude = (
-                    nn.MSELoss(reduction="none")(predicted_latitude, y[:, 1])
-                    * discount_matrix
-                )
+                weighted_loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[:40, 0]) * discount_matrix
+                weighted_loss_latitude = (nn.MSELoss(reduction="none")(predicted_latitude, y[:40, 1]) * discount_matrix)
 
                 loss_longitude = torch.mean(weighted_loss_longitude)
                 loss_latitude = torch.mean(weighted_loss_latitude)
@@ -158,8 +150,9 @@ def train(
                 loss = loss_longitude + loss_latitude
 
             elif loss_computation == "all":
+                data_len = x.shape[0]
                 loss = 0
-                for i in range(len(y_hat)):
+                for i in range(1, len(y_hat)):
                     predicted_longitude = y_hat[i][:, 34]
                     predicted_latitude = y_hat[i][:, 35]
                     loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
