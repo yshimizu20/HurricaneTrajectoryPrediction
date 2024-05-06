@@ -18,8 +18,6 @@ SOLVER_LIST = [
     "RungeKutta4",
     "DormandPrince45",
     "Tsitouras45",
-    # "implicit_euler",
-    # "AsynchronousLeapfrog",
 ]
 
 # if "log/" does not exist, create it
@@ -34,7 +32,7 @@ for sensitivity in sensitivity_list:
             if forward_solver == backward_solver:
                 continue
 
-            log_path = f"logs/combined/{sensitivity}_{forward_solver}_{backward_solver}.log"
+            log_path = f"logs/combined/{sensitivity}_{forward_solver}_{backward_solver}_400.log"
 
             if os.path.exists(log_path):
                 print(f"Skipping training with sensitivity: {sensitivity} and forward solver: {forward_solver} and backward solver: {backward_solver}")
@@ -47,10 +45,11 @@ for sensitivity in sensitivity_list:
             model = NeuralODE(FlowNet(36), sensitivity=sensitivity, solver=forward_solver, solver_adjoint=backward_solver, atol=1e-3, rtol=1e-3).to(
                 device
             )
-            optimizer = optim.Adam(model.parameters(), lr=0.01)
+            optimizer = optim.Adam(model.parameters(), lr=0.001)
+            scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.9)
 
             # Train the model
-            train(model, device, training_loader, test_loader, optimizer, num_epochs=500, log_path=log_path)
+            train(model, device, training_loader, test_loader, optimizer, scheduler, num_epochs=400, log_path=log_path)
 
             # Test the model
             test(model, device, test_loader, log_path=log_path)
