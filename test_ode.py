@@ -28,7 +28,7 @@ for sensitivity in sensitivity_list:
         if not os.path.exists("logs/sensitivity"):
             os.makedirs("logs/sensitivity")
 
-        log_path = f"logs/sensitivity/{sensitivity}_{solver}_500.log"
+        log_path = f"logs/sensitivity/{sensitivity}_{solver}_400.log"
 
         if os.path.exists(log_path):
             print(f"Skipping training with sensitivity: {sensitivity} and solver: {solver}")
@@ -41,10 +41,10 @@ for sensitivity in sensitivity_list:
             device
         )
         optimizer = optim.Adam(model.parameters(), lr=0.001)
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.99)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.9)
 
         # Train the model
-        train(model, device, training_loader, test_loader, optimizer, scheduler, num_epochs=500, log_path=log_path)
+        train(model, device, training_loader, test_loader, optimizer, scheduler, num_epochs=400, log_path=log_path)
 
         # Test the model
         test(model, device, test_loader, log_path=log_path)
