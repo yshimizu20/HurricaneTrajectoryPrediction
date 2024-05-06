@@ -11,6 +11,7 @@ import torch.optim as optim
 from torchdyn.core import NeuralODE
 import json
 from collections import defaultdict
+import math
 
 from pathlib import Path
 
@@ -150,14 +151,54 @@ def train(
                 loss = loss_longitude + loss_latitude
 
             elif loss_computation == "all":
-                data_len = x.shape[0]
                 loss = 0
                 for i in range(1, len(y_hat)):
-                    predicted_longitude = y_hat[i][:, 34]
-                    predicted_latitude = y_hat[i][:, 35]
-                    loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
-                    loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
+                    predicted_longitude = y_hat[i, :x.shape[0] - i, 34]
+                    predicted_latitude = y_hat[i, :x.shape[0] - i, 35]
+
+                    loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[i:, 0])
+                    loss_latitude = nn.MSELoss(reduction="none")(
+                        predicted_latitude, y[i:, 1]
+                    )
+
+                    loss_longitude = torch.sum(loss_longitude)
+                    loss_latitude = torch.sum(loss_latitude)
+
                     loss += loss_longitude + loss_latitude
+                
+                loss /= (x.shape[0] ** 1.5)
+
+            elif loss_computation == "all_with_discount":
+                loss = 0
+                discount_factor = 0.98
+                discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T.to(device)
+
+                for i in range(1, len(y_hat)):
+                    predicted_longitude = y_hat[i, :x.shape[0] - i, 34]
+                    predicted_latitude = y_hat[i, :x.shape[0] - i, 35]
+
+                    weighted_loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[i:, 0]) * discount_matrix[i:]
+                    weighted_loss_latitude = nn.MSELoss(reduction="none")(predicted_latitude, y[i:, 1]) * discount_matrix[i:]
+
+                    loss_longitude = torch.sum(weighted_loss_longitude)
+                    loss_latitude = torch.sum(weighted_loss_latitude)
+
+                    loss += loss_longitude + loss_latitude
+                
+                loss /= (x.shape[0] ** 1.5)
+
+            elif loss_computation == "next_only":
+                try:
+                    predicted_longitude = y_hat[1, :x.shape[0] - 1, 34]
+                    predicted_latitude = y_hat[1, :x.shape[0] - 1, 35]
+                except Exception as e:
+                    continue
+
+                loss_longitude = nn.MSELoss()(predicted_longitude, y[1:, 0])
+                loss_latitude = nn.MSELoss()(predicted_latitude, y[1:, 1])
+
+                loss = loss_longitude + loss_latitude
+
             else:
                 raise NotImplementedError
 
@@ -182,29 +223,68 @@ def train(
 # Define the testing function
 def test(model, device, test_loader, log_path=None):
     model.eval()
-    total_loss = 0
+
+    total_loss_one_run = 0
+    total_loss_all = 0
+    total_loss_next_only = 0
+
     with torch.no_grad():
         for x, y in test_loader:
             x, y = x.to(device), y.to(device)
             t_span = t_span_full[:x.shape[0]]
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
 
+            # deal with one_run
             predicted_longitude = y_hat[:, 0, 34]
             predicted_latitude = y_hat[:, 0, 35]
 
-            # Compute MSE losses
             loss_longitude = nn.MSELoss()(predicted_longitude, y[:40, 0])
             loss_latitude = nn.MSELoss()(predicted_latitude, y[:40, 1])
 
             loss = loss_longitude + loss_latitude
 
-            total_loss += loss.item()
+            total_loss_one_run += loss.item()
+
+            # deal with all
+            loss = 0
+            for i in range(1, len(y_hat)):
+                predicted_longitude = y_hat[i, :x.shape[0] - i, 34]
+                predicted_latitude = y_hat[i, :x.shape[0] - i, 35]
+
+                loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[i:, 0])
+                loss_latitude = nn.MSELoss(reduction="none")(predicted_latitude, y[i:, 1])
+
+                loss_longitude = torch.sum(loss_longitude)
+                loss_latitude = torch.sum(loss_latitude)
+
+                loss += loss_longitude + loss_latitude
+                
+            loss /= (x.shape[0] ** 1.5)
+            total_loss_all += loss.item()
+
+            # deal with next_only
+            try:
+                predicted_longitude = y_hat[1, :x.shape[0] - 1, 34]
+                predicted_latitude = y_hat[1, :x.shape[0] - 1, 35]
+            except Exception as e:
+                continue
+
+            loss_longitude = nn.MSELoss()(predicted_longitude, y[1:, 0])
+            loss_latitude = nn.MSELoss()(predicted_latitude, y[1:, 1])
+
+            loss = loss_longitude + loss_latitude
+
+            total_loss_next_only += loss.item()
     
     if log_path is not None:
         with open(log_path, "a") as f:
-            f.write(f"Test Loss: {total_loss / len(test_loader)}\n")
+            f.write(f"Test Loss one_run: {total_loss_one_run / len(test_loader)}\n")
+            f.write(f"Test Loss all: {total_loss_all / len(test_loader)}\n")
+            f.write(f"Test Loss next_only: {total_loss_next_only / len(test_loader)}\n")
     else:
-        print(f"Test Loss: {total_loss / len(test_loader)}")
+        print(f"Test Loss one_run: {total_loss_one_run / len(test_loader)}")
+        print(f"Test Loss all: {total_loss_all / len(test_loader)}")
+        print(f"Test Loss next_only: {total_loss_next_only / len(test_loader)}")
 
 if __name__ == "__main__":
     # Define NDE Model
@@ -223,5 +303,5 @@ if __name__ == "__main__":
     train_loader, test_loader = prepare_data()
 
     # Training and testing the model
-    train(model, device, train_loader, test_loader, optimizer, scheduler, num_epochs=500)
+    train(model, device, train_loader, test_loader, optimizer, scheduler, num_epochs=400, loss_computation="next_only")
     test(model, device, test_loader)
