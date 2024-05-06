@@ -23,8 +23,8 @@ SOLVER_LIST = [
 # if "log/" does not exist, create it
 if not os.path.exists("logs"):
     os.makedirs("logs")
-if not os.path.exists("logs/combined"):
-    os.makedirs("logs/combined")
+if not os.path.exists("logs/sensitivity_combined"):
+    os.makedirs("logs/sensitivity_combined")
 
 for sensitivity in sensitivity_list:
     for forward_solver in SOLVER_LIST:
@@ -32,7 +32,7 @@ for sensitivity in sensitivity_list:
             if forward_solver == backward_solver:
                 continue
 
-            log_path = f"logs/combined/{sensitivity}_{forward_solver}_{backward_solver}_400.log"
+            log_path = f"logs/sensitivity_combined/{sensitivity}_{forward_solver}_{backward_solver}_400.log"
 
             if os.path.exists(log_path):
                 print(f"Skipping training with sensitivity: {sensitivity} and forward solver: {forward_solver} and backward solver: {backward_solver}")
