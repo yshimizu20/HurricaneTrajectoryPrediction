@@ -119,7 +119,7 @@ def train(
         total_loss = 0
         for batch_idx, (x, y) in enumerate(train_loader):
             x, y = x.to(device), y.to(device)
-            t_span = t_span_full[:x.shape[0] - 5]
+            t_span = t_span_full[:x.shape[0]]
             optimizer.zero_grad()
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
 
