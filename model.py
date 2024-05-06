@@ -4,7 +4,6 @@ CPSC 452 Hurricane Trajectory Prediction
 Purpose: Models
 """
 
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -74,5 +73,5 @@ class FlowNet(nn.Module):
             nn.Linear(2 * n_dim, n_dim),
         )
 
-    def forward(self, x):
+    def forward(self, t, x, **kwargs):
         return self.func(x)

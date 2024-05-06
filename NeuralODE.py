@@ -98,19 +98,19 @@ def prepare_data():
 
     return train_loader, test_loader
 
-"""
-Hurricanes last 10 days. That's 40 6-hour periods.
-"""
-t_span = torch.linspace(0, 1, 40)
+
+def adjust_t_span(seq_len):
+    return torch.linspace(0, 1, seq_len)
 
 
 # Define the training function
-def train(model, device, train_loader, optimizer, num_epochs):
+def train(model, device, train_loader, test_loader, optimizer, num_epochs, log_path=None):
     model.train()
     for epoch in range(num_epochs):
         total_loss = 0
         for batch_idx, (x, y) in enumerate(train_loader):
             x, y = x.to(device), y.to(device)
+            t_span = adjust_t_span(x.shape[0])
             optimizer.zero_grad()
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
             y_hat = y_hat[-1]  # get the last output
@@ -119,25 +119,30 @@ def train(model, device, train_loader, optimizer, num_epochs):
             loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
             loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
             loss = loss_longitude + loss_latitude
-            loss.backward()
+            loss.backward(retain_graph=True)
             optimizer.step()
             total_loss += loss.item()
-        
-        if epoch % 5 == 0:
-            # run test and save model
-            test(model, device, test_loader)
-            torch.save(model.state_dict(), f"saved_models/model_{epoch}.pth")
 
-        print(f"Epoch {epoch}, Average Loss {total_loss / len(train_loader)}")
+        if log_path is not None:
+            with open(log_path, "a") as f:
+                f.write(f"Epoch {epoch}, Average Loss {total_loss / len(train_loader)}\n")
+        else:
+            print(f"Epoch {epoch}, Average Loss {total_loss / len(train_loader)}")
+
+        if epoch % 10 == 0:
+            # run test and save model
+            test(model, device, test_loader, log_path)
+            # torch.save(model.state_dict(), f"saved_models/model_{epoch}.pth")
 
 
 # Define the testing function
-def test(model, device, test_loader):
+def test(model, device, test_loader, log_path=None):
     model.eval()
     total_loss = 0
     with torch.no_grad():
         for x, y in test_loader:
             x, y = x.to(device), y.to(device)
+            t_span = adjust_t_span(x.shape[0])
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
             y_hat = y_hat[-1]  # get the last output
             predicted_longitude = y_hat[:, 34]
@@ -146,7 +151,12 @@ def test(model, device, test_loader):
             loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
             loss = loss_longitude + loss_latitude
             total_loss += loss.item()
-    print(f"Test Loss: {total_loss / len(test_loader)}")
+    
+    if log_path is not None:
+        with open(log_path, "a") as f:
+            f.write(f"Test Loss: {total_loss / len(test_loader)}\n")
+    else:
+        print(f"Test Loss: {total_loss / len(test_loader)}")
 
 if __name__ == "__main__":
     # Define NDE Model
@@ -163,5 +173,5 @@ if __name__ == "__main__":
     train_loader, test_loader = prepare_data()
 
     # Training and testing the model
-    train(model, device, train_loader, optimizer, num_epochs=100)
+    train(model, device, train_loader, test_loader, optimizer, num_epochs=500)
     test(model, device, test_loader)
