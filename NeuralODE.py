@@ -113,18 +113,21 @@ def train(
     scheduler,
     num_epochs,
     log_path=None,
-    loss_computation="one_run",
+    eval_metric="one_run",
 ):
     model.train()
     for epoch in range(num_epochs):
         total_loss = 0
+
         for batch_idx, (x, y) in enumerate(train_loader):
             x, y = x.to(device), y.to(device)
             t_span = t_span_full[:x.shape[0]]
             optimizer.zero_grad()
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
 
-            if loss_computation == "one_run":
+            loss = 0
+
+            if "one_run" in eval_metric.split(" "):
                 predicted_longitude = y_hat[:, 0, 34]
                 predicted_latitude = y_hat[:, 0, 35]
 
@@ -134,7 +137,11 @@ def train(
 
                 loss = loss_longitude + loss_latitude
 
-            elif loss_computation == "one_run_with_discount":
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+            if "one_run_with_discount" in eval_metric.split(" "):
                 predicted_longitude = y_hat[:, 0, 34]
                 predicted_latitude = y_hat[:, 0, 35]
 
@@ -150,7 +157,11 @@ def train(
 
                 loss = loss_longitude + loss_latitude
 
-            elif loss_computation == "all":
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+            if "all" in eval_metric.split(" "):
                 loss = 0
                 for i in range(1, len(y_hat)):
                     predicted_longitude = y_hat[i, :x.shape[0] - i, 34]
@@ -165,10 +176,14 @@ def train(
                     loss_latitude = torch.sum(loss_latitude)
 
                     loss += loss_longitude + loss_latitude
-                
+
                 loss /= (x.shape[0] ** 1.5)
 
-            elif loss_computation == "all_with_discount":
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+            if "all_with_discount" in eval_metric.split(" "):
                 loss = 0
                 discount_factor = 0.98
                 discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T.to(device)
@@ -184,10 +199,14 @@ def train(
                     loss_latitude = torch.sum(weighted_loss_latitude)
 
                     loss += loss_longitude + loss_latitude
-                
+
                 loss /= (x.shape[0] ** 1.5)
 
-            elif loss_computation == "next_only":
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
+
+            if "next_only" in eval_metric.split(" "):
                 try:
                     predicted_longitude = y_hat[1, :x.shape[0] - 1, 34]
                     predicted_latitude = y_hat[1, :x.shape[0] - 1, 35]
@@ -199,12 +218,9 @@ def train(
 
                 loss = loss_longitude + loss_latitude
 
-            else:
-                raise NotImplementedError
-
-            loss.backward(retain_graph=True)
-            optimizer.step()
-            total_loss += loss.item()
+                loss.backward(retain_graph=True)
+                optimizer.step()
+                total_loss += loss.item()
 
         if log_path is not None:
             with open(log_path, "a") as f:
@@ -303,5 +319,5 @@ if __name__ == "__main__":
     train_loader, test_loader = prepare_data()
 
     # Training and testing the model
-    train(model, device, train_loader, test_loader, optimizer, scheduler, num_epochs=400, loss_computation="next_only")
+    train(model, device, train_loader, test_loader, optimizer, scheduler, num_epochs=400, eval_metric="next_only")
     test(model, device, test_loader)

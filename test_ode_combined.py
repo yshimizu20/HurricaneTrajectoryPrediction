@@ -11,7 +11,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Prepare the data
 training_loader, test_loader = prepare_data()
 
-sensitivity_list = ["adjoint", "autograd"]
+SENSITIVITY_LIST = ["adjoint", "autograd"]
 SOLVER_LIST = [
     "euler",
     "midpoint",
@@ -26,7 +26,7 @@ if not os.path.exists("logs"):
 if not os.path.exists("logs/sensitivity_combined"):
     os.makedirs("logs/sensitivity_combined")
 
-for sensitivity in sensitivity_list:
+for sensitivity in SENSITIVITY_LIST:
     for forward_solver in SOLVER_LIST:
         for backward_solver in SOLVER_LIST:
             if forward_solver == backward_solver:

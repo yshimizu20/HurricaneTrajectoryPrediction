@@ -11,7 +11,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Prepare the data
 training_loader, test_loader = prepare_data()
 
-sensitivity_list = ["adjoint", "autograd"]
+SENSITIVITY_LIST = ["adjoint", "autograd"]
 SOLVER_LIST = [
     "euler",
     "midpoint",
@@ -20,14 +20,14 @@ SOLVER_LIST = [
     "Tsitouras45",
 ]
 
-for sensitivity in sensitivity_list:
-    for solver in SOLVER_LIST:
-        # if "log/" does not exist, create it
-        if not os.path.exists("logs"):
-            os.makedirs("logs")
-        if not os.path.exists("logs/sensitivity"):
-            os.makedirs("logs/sensitivity")
+# if "log/" does not exist, create it
+if not os.path.exists("logs"):
+    os.makedirs("logs")
+if not os.path.exists("logs/sensitivity"):
+    os.makedirs("logs/sensitivity")
 
+for sensitivity in SENSITIVITY_LIST:
+    for solver in SOLVER_LIST:
         log_path = f"logs/sensitivity/{sensitivity}_{solver}_400.log"
 
         if os.path.exists(log_path):
