@@ -104,7 +104,16 @@ def adjust_t_span(seq_len):
 
 
 # Define the training function
-def train(model, device, train_loader, test_loader, optimizer, num_epochs, log_path=None):
+def train(
+    model,
+    device,
+    train_loader,
+    test_loader,
+    optimizer,
+    num_epochs,
+    log_path=None,
+    loss_computation="one_run",
+):
     model.train()
     for epoch in range(num_epochs):
         total_loss = 0
@@ -113,12 +122,58 @@ def train(model, device, train_loader, test_loader, optimizer, num_epochs, log_p
             t_span = adjust_t_span(x.shape[0])
             optimizer.zero_grad()
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
-            y_hat = y_hat[-1]  # get the last output
-            predicted_longitude = y_hat[:, 34]
-            predicted_latitude = y_hat[:, 35]
-            loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
-            loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
-            loss = loss_longitude + loss_latitude
+
+            print(f"x.shape: {x.shape}")
+            print(f"y.shape: {y.shape}")
+            print(f"y_hat.shape: {y_hat.shape}")
+
+            if loss_computation == "one_run":
+                y_hat = y_hat[2]  # get the last output
+                predicted_longitude = y_hat[:, 34]
+                predicted_latitude = y_hat[:, 35]
+                loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
+                loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
+
+                print(f"y[:, 0]: {y[:, 0]}")
+                print(f"predicted_longitude: {predicted_longitude}")
+
+                import sys
+                sys.exit(0)
+
+                loss = loss_longitude + loss_latitude
+
+            elif loss_computation == "one_run_with_discount":
+                y_hat = y_hat[-1]
+                predicted_longitude = y_hat[:, 34]
+                predicted_latitude = y_hat[:, 35]
+
+                discount_factor = 0.99
+                discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T
+                discount_matrix = discount_matrix / discount_matrix.mean()
+
+                # calculate loss and apply discount factor
+                weighted_loss_longitude = nn.MSELoss(reduction="none")(predicted_longitude, y[:, 0]) * discount_matrix
+                weighted_loss_latitude = (
+                    nn.MSELoss(reduction="none")(predicted_latitude, y[:, 1])
+                    * discount_matrix
+                )
+
+                loss_longitude = torch.mean(weighted_loss_longitude)
+                loss_latitude = torch.mean(weighted_loss_latitude)
+
+                loss = loss_longitude + loss_latitude
+
+            elif loss_computation == "all":
+                loss = 0
+                for i in range(len(y_hat)):
+                    predicted_longitude = y_hat[i][:, 34]
+                    predicted_latitude = y_hat[i][:, 35]
+                    loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
+                    loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
+                    loss += loss_longitude + loss_latitude
+            else:
+                raise NotImplementedError
+
             loss.backward(retain_graph=True)
             optimizer.step()
             total_loss += loss.item()
@@ -173,5 +228,5 @@ if __name__ == "__main__":
     train_loader, test_loader = prepare_data()
 
     # Training and testing the model
-    train(model, device, train_loader, test_loader, optimizer, num_epochs=500)
+    train(model, device, train_loader, test_loader, optimizer, num_epochs=2)
     test(model, device, test_loader)
