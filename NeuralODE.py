@@ -99,8 +99,7 @@ def prepare_data():
     return train_loader, test_loader
 
 
-def adjust_t_span(seq_len):
-    return torch.linspace(0, 1, seq_len)
+t_span_full = torch.linspace(0, 1, 40)
 
 
 # Define the training function
@@ -110,6 +109,7 @@ def train(
     train_loader,
     test_loader,
     optimizer,
+    scheduler,
     num_epochs,
     log_path=None,
     loss_computation="one_run",
@@ -119,26 +119,20 @@ def train(
         total_loss = 0
         for batch_idx, (x, y) in enumerate(train_loader):
             x, y = x.to(device), y.to(device)
-            t_span = adjust_t_span(x.shape[0])
+            t_span = t_span_full[:x.shape[0]]
             optimizer.zero_grad()
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
 
-            print(f"x.shape: {x.shape}")
-            print(f"y.shape: {y.shape}")
-            print(f"y_hat.shape: {y_hat.shape}")
-
             if loss_computation == "one_run":
-                y_hat = y_hat[2]  # get the last output
-                predicted_longitude = y_hat[:, 34]
-                predicted_latitude = y_hat[:, 35]
-                loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
-                loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
+                predicted_longitude = y_hat[:, 0, 34]
+                predicted_latitude = y_hat[:, 0, 35]
 
-                print(f"y[:, 0]: {y[:, 0]}")
-                print(f"predicted_longitude: {predicted_longitude}")
+                # Compute MSE losses
+                loss_longitude = nn.MSELoss()(predicted_longitude, y[:40, 0])
+                loss_latitude = nn.MSELoss()(predicted_latitude, y[:40, 1])
 
-                import sys
-                sys.exit(0)
+                # print(f"y[:, 0]: {y[:, 0]}")
+                # print(f"predicted_longitude: {predicted_longitude}")
 
                 loss = loss_longitude + loss_latitude
 
@@ -184,7 +178,9 @@ def train(
         else:
             print(f"Epoch {epoch}, Average Loss {total_loss / len(train_loader)}")
 
-        if epoch % 10 == 0:
+        scheduler.step()
+
+        if epoch % 5 == 0:
             # run test and save model
             test(model, device, test_loader, log_path)
             # torch.save(model.state_dict(), f"saved_models/model_{epoch}.pth")
@@ -197,14 +193,18 @@ def test(model, device, test_loader, log_path=None):
     with torch.no_grad():
         for x, y in test_loader:
             x, y = x.to(device), y.to(device)
-            t_span = adjust_t_span(x.shape[0])
+            t_span = t_span_full[:x.shape[0]]
             t_eval, y_hat = model(torch.cat((x, y), dim=1), t_span)
-            y_hat = y_hat[-1]  # get the last output
-            predicted_longitude = y_hat[:, 34]
-            predicted_latitude = y_hat[:, 35]
-            loss_longitude = nn.MSELoss()(predicted_longitude, y[:, 0])
-            loss_latitude = nn.MSELoss()(predicted_latitude, y[:, 1])
+
+            predicted_longitude = y_hat[:, 0, 34]
+            predicted_latitude = y_hat[:, 0, 35]
+
+            # Compute MSE losses
+            loss_longitude = nn.MSELoss()(predicted_longitude, y[:40, 0])
+            loss_latitude = nn.MSELoss()(predicted_latitude, y[:40, 1])
+
             loss = loss_longitude + loss_latitude
+
             total_loss += loss.item()
     
     if log_path is not None:
@@ -222,11 +222,13 @@ if __name__ == "__main__":
     Output features sizel: 2 (long and lat)
     """
     model = NeuralODE(FlowNet(36), sensitivity="adjoint", solver="dopri5").to(device)
-    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    # implement optimizer with lr decay
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.99)
     
     # Prepare data
     train_loader, test_loader = prepare_data()
 
     # Training and testing the model
-    train(model, device, train_loader, test_loader, optimizer, num_epochs=2)
+    train(model, device, train_loader, test_loader, optimizer, scheduler, num_epochs=500)
     test(model, device, test_loader)
