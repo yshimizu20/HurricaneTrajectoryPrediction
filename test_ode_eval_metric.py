@@ -38,6 +38,9 @@ for sensitivity in SENSITIVITY_LIST:
                 print(f"Skipping training with eval_metric: {eval_metric} and sensitivity: {sensitivity} and solver: {solver}")
                 continue
 
+            with open(log_path, "w") as f:
+                f.write("")
+
             print(f"Training with eval_metric: {eval_metric} and sensitivity: {sensitivity} and solver: {solver}")
 
             # Define NDE Model

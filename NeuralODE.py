@@ -145,7 +145,7 @@ def train(
                 predicted_longitude = y_hat[:, 0, 34]
                 predicted_latitude = y_hat[:, 0, 35]
 
-                discount_factor = 0.98
+                discount_factor = 0.95
                 discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T.to(device)
 
                 # calculate loss and apply discount factor
@@ -185,7 +185,7 @@ def train(
 
             if "all_with_discount" in eval_metric.split(" "):
                 loss = 0
-                discount_factor = 0.98
+                discount_factor = 0.95
                 discount_matrix = torch.tensor([[discount_factor ** i for i in range(len(y_hat))]]).T.to(device)
 
                 for i in range(1, len(y_hat)):
