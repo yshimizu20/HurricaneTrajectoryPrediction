@@ -9,5 +9,3 @@ one_run, autograd                               (340.196, 110)  ...   (71.155, 3
 one_run_with_discount, autograd                  (344.422, 55)  ...    (78.034, 30)
 one_run, adjoint                                (415.506, 395)  ...   (81.891, 400)
 all, autograd                                    (502.975, 90)  ...  (108.473, 390)
-
-[10 rows x 3 columns]
