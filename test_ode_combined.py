@@ -37,6 +37,9 @@ for sensitivity in SENSITIVITY_LIST:
             if os.path.exists(log_path):
                 print(f"Skipping training with sensitivity: {sensitivity} and forward solver: {forward_solver} and backward solver: {backward_solver}")
                 continue
+            
+            with open(log_path, "w") as f:
+                f.write("")
 
             print(f"Training with sensitivity: {sensitivity} and forward solver: {forward_solver} and backward solver: {backward_solver}")
 
