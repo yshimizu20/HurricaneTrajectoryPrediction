@@ -1,0 +1,643 @@
+Epoch 0, Average Loss 940.7053428692154
+Test Loss one_run: 542.442394682765
+Test Loss all: 812.0679616302252
+Test Loss next_only: 82.26595172286034
+Epoch 1, Average Loss 917.7271322751347
+Epoch 2, Average Loss 908.1498003005981
+Epoch 3, Average Loss 907.2307488812676
+Epoch 4, Average Loss 906.0458532609517
+Epoch 5, Average Loss 902.1540908647489
+Test Loss one_run: 493.72453792095183
+Test Loss all: 758.7482549831271
+Test Loss next_only: 81.46778510808944
+Epoch 6, Average Loss 902.473307686516
+Epoch 7, Average Loss 897.6998571806316
+Epoch 8, Average Loss 886.0980649733846
+Epoch 9, Average Loss 894.0458546937266
+Epoch 10, Average Loss 880.2739524931848
+Test Loss one_run: 466.2676890939474
+Test Loss all: 736.5781128153205
+Test Loss next_only: 81.08045549988746
+Epoch 11, Average Loss 872.2539246655717
+Epoch 12, Average Loss 872.1965927036503
+Epoch 13, Average Loss 858.4761132560199
+Epoch 14, Average Loss 877.3822464595867
+Epoch 15, Average Loss 831.5424035757403
+Test Loss one_run: 423.3304457396269
+Test Loss all: 701.197102740407
+Test Loss next_only: 80.3619666337967
+Epoch 16, Average Loss 848.1905303220205
+Epoch 17, Average Loss 822.4043401079841
+Epoch 18, Average Loss 816.732082114944
+Epoch 19, Average Loss 789.8881028754802
+Epoch 20, Average Loss 785.2814260196836
+Test Loss one_run: 422.0282100379467
+Test Loss all: 691.662349358201
+Test Loss next_only: 79.97522873282432
+Epoch 21, Average Loss 766.3660774940176
+Epoch 22, Average Loss 782.8177373263089
+Epoch 23, Average Loss 747.5108034584341
+Epoch 24, Average Loss 752.0503174431527
+Epoch 25, Average Loss 725.6314564318974
+Test Loss one_run: 368.6038971364498
+Test Loss all: 651.7596085190773
+Test Loss next_only: 79.01079984307289
+Epoch 26, Average Loss 745.0532553838212
+Epoch 27, Average Loss 751.350404502093
+Epoch 28, Average Loss 736.3756011609413
+Epoch 29, Average Loss 717.8786648072397
+Epoch 30, Average Loss 699.7297349482586
+Test Loss one_run: 342.23201442956923
+Test Loss all: 652.8237971782685
+Test Loss next_only: 78.82377848625183
+Epoch 31, Average Loss 726.6455586605434
+Epoch 32, Average Loss 712.5211278992363
+Epoch 33, Average Loss 715.1026109155221
+Epoch 34, Average Loss 701.0583931818793
+Epoch 35, Average Loss 678.6455696529791
+Test Loss one_run: 320.65079468488693
+Test Loss all: 621.4959260642529
+Test Loss next_only: 78.3479068517685
+Epoch 36, Average Loss 700.4342657512502
+Epoch 37, Average Loss 710.6064724643019
+Epoch 38, Average Loss 690.8099430680652
+Epoch 39, Average Loss 683.5138231329148
+Epoch 40, Average Loss 678.9788851020504
+Test Loss one_run: 332.0982162952423
+Test Loss all: 623.5721147000789
+Test Loss next_only: 78.47143129110336
+Epoch 41, Average Loss 674.8449995749736
+Epoch 42, Average Loss 662.3691385131848
+Epoch 43, Average Loss 636.7480160609076
+Epoch 44, Average Loss 678.2305508772783
+Epoch 45, Average Loss 659.1804753526857
+Test Loss one_run: 331.5623715400696
+Test Loss all: 617.7489935278893
+Test Loss next_only: 78.36755281090737
+Epoch 46, Average Loss 675.9541235724582
+Epoch 47, Average Loss 662.8849800406377
+Epoch 48, Average Loss 661.3216536754294
+Epoch 49, Average Loss 664.9816426008563
+Epoch 50, Average Loss 634.7703995983812
+Test Loss one_run: 342.97386226654055
+Test Loss all: 635.1640742063522
+Test Loss next_only: 78.81997433900833
+Epoch 51, Average Loss 661.7522982751267
+Epoch 52, Average Loss 666.6658007932615
+Epoch 53, Average Loss 669.1768877170508
+Epoch 54, Average Loss 634.1417604333992
+Epoch 55, Average Loss 648.2098111940336
+Test Loss one_run: 321.36815401315687
+Test Loss all: 607.1108469724655
+Test Loss next_only: 78.34011489152908
+Epoch 56, Average Loss 646.2567341391799
+Epoch 57, Average Loss 639.9476569015768
+Epoch 58, Average Loss 637.7817951180513
+Epoch 59, Average Loss 644.6048309995404
+Epoch 60, Average Loss 636.3360877391658
+Test Loss one_run: 349.5182604789734
+Test Loss all: 638.7578238129615
+Test Loss next_only: 79.09256286621094
+Epoch 61, Average Loss 631.7181800151174
+Epoch 62, Average Loss 650.8194405715677
+Epoch 63, Average Loss 624.1646047159086
+Epoch 64, Average Loss 633.0256295309791
+Epoch 65, Average Loss 623.7571914037571
+Test Loss one_run: 306.98792078495023
+Test Loss all: 590.193276643753
+Test Loss next_only: 77.7374069571495
+Epoch 66, Average Loss 630.8440780941444
+Epoch 67, Average Loss 631.9317906513999
+Epoch 68, Average Loss 615.93807526178
+Epoch 69, Average Loss 639.6530564570729
+Epoch 70, Average Loss 613.1064153970042
+Test Loss one_run: 310.5431836605072
+Test Loss all: 594.6484373450279
+Test Loss next_only: 77.47450538873673
+Epoch 71, Average Loss 633.7413861208324
+Epoch 72, Average Loss 616.4002213719525
+Epoch 73, Average Loss 607.4249455264852
+Epoch 74, Average Loss 630.8361395846439
+Epoch 75, Average Loss 605.9826420017436
+Test Loss one_run: 354.5720443844795
+Test Loss all: 645.1039011716842
+Test Loss next_only: 79.22133177518845
+Epoch 76, Average Loss 621.363257452657
+Epoch 77, Average Loss 613.2675646996196
+Epoch 78, Average Loss 640.8094207576559
+Epoch 79, Average Loss 616.1210188684585
+Epoch 80, Average Loss 619.2992669796641
+Test Loss one_run: 335.81964005231856
+Test Loss all: 619.4517680287361
+Test Loss next_only: 78.63575313091278
+Epoch 81, Average Loss 609.1472223348255
+Epoch 82, Average Loss 612.724638015409
+Epoch 83, Average Loss 610.3887243270874
+Epoch 84, Average Loss 608.7151068320758
+Epoch 85, Average Loss 610.680046963918
+Test Loss one_run: 321.91084337234497
+Test Loss all: 599.9021417737007
+Test Loss next_only: 78.17153251171112
+Epoch 86, Average Loss 612.4455411464353
+Epoch 87, Average Loss 606.3938543374026
+Epoch 88, Average Loss 601.3137941224666
+Epoch 89, Average Loss 597.7608547852009
+Epoch 90, Average Loss 613.5127069459686
+Test Loss one_run: 332.07361125946045
+Test Loss all: 612.7486316442489
+Test Loss next_only: 78.66366395950317
+Epoch 91, Average Loss 609.7650554768646
+Epoch 92, Average Loss 596.4998773260961
+Epoch 93, Average Loss 599.7743618533581
+Epoch 94, Average Loss 598.1646937826011
+Epoch 95, Average Loss 597.8199092557159
+Test Loss one_run: 330.29346842169764
+Test Loss all: 608.2067947983742
+Test Loss next_only: 77.95761307477952
+Epoch 96, Average Loss 599.3006302329559
+Epoch 97, Average Loss 592.5295247601557
+Epoch 98, Average Loss 605.2065517917464
+Epoch 99, Average Loss 600.6951504847672
+Epoch 100, Average Loss 589.1650445431094
+Test Loss one_run: 311.6862992525101
+Test Loss all: 579.57942289114
+Test Loss next_only: 77.22405903339386
+Epoch 101, Average Loss 591.6555308254459
+Epoch 102, Average Loss 590.1048107237756
+Epoch 103, Average Loss 586.6898345879362
+Epoch 104, Average Loss 594.0504221357877
+Epoch 105, Average Loss 599.4679889414884
+Test Loss one_run: 341.54478311538696
+Test Loss all: 621.9510062456131
+Test Loss next_only: 78.99603198766708
+Epoch 106, Average Loss 594.8670929157281
+Epoch 107, Average Loss 591.9791976492617
+Epoch 108, Average Loss 586.3362043960185
+Epoch 109, Average Loss 594.5722891318647
+Epoch 110, Average Loss 585.9369801546953
+Test Loss one_run: 323.5933525800705
+Test Loss all: 596.9276030778885
+Test Loss next_only: 77.75225069522858
+Epoch 111, Average Loss 581.8676959819431
+Epoch 112, Average Loss 587.108981428267
+Epoch 113, Average Loss 595.0855886626847
+Epoch 114, Average Loss 582.2244124163556
+Epoch 115, Average Loss 593.3110497194
+Test Loss one_run: 312.6075480222702
+Test Loss all: 577.9456762194634
+Test Loss next_only: 76.89180099964142
+Epoch 116, Average Loss 580.2676461640792
+Epoch 117, Average Loss 586.6677953480165
+Epoch 118, Average Loss 585.6388936812365
+Epoch 119, Average Loss 583.6029840828497
+Epoch 120, Average Loss 586.7337937898274
+Test Loss one_run: 321.1806712508202
+Test Loss all: 586.2864702105522
+Test Loss next_only: 77.18676928281783
+Epoch 121, Average Loss 572.3716401752038
+Epoch 122, Average Loss 576.5798256691498
+Epoch 123, Average Loss 576.9155597083176
+Epoch 124, Average Loss 580.4992134955864
+Epoch 125, Average Loss 576.4491272742235
+Test Loss one_run: 337.546778857708
+Test Loss all: 614.0625081539154
+Test Loss next_only: 78.03929765224457
+Epoch 126, Average Loss 577.8260717852206
+Epoch 127, Average Loss 572.5886328484438
+Epoch 128, Average Loss 578.2709522134141
+Epoch 129, Average Loss 571.8560274613054
+Epoch 130, Average Loss 574.2947694893124
+Test Loss one_run: 319.0784673929214
+Test Loss all: 585.4964903354645
+Test Loss next_only: 77.13352021574974
+Epoch 131, Average Loss 573.9095608584488
+Epoch 132, Average Loss 576.6189900908289
+Epoch 133, Average Loss 574.7804950868027
+Epoch 134, Average Loss 567.4001285531853
+Epoch 135, Average Loss 567.559925685955
+Test Loss one_run: 325.61526029706
+Test Loss all: 596.2024260640144
+Test Loss next_only: 77.17017374038696
+Epoch 136, Average Loss 570.312173687959
+Epoch 137, Average Loss 572.3534226711793
+Epoch 138, Average Loss 566.7219772625573
+Epoch 139, Average Loss 564.4089827190471
+Epoch 140, Average Loss 573.5892711244052
+Test Loss one_run: 320.27949502468107
+Test Loss all: 586.5813722968102
+Test Loss next_only: 76.68859579563141
+Epoch 141, Average Loss 564.6189786708808
+Epoch 142, Average Loss 560.8179360326333
+Epoch 143, Average Loss 566.0237395054178
+Epoch 144, Average Loss 564.139925538739
+Epoch 145, Average Loss 563.1470212242272
+Test Loss one_run: 307.46224453449247
+Test Loss all: 565.5127491116524
+Test Loss next_only: 76.59984597563744
+Epoch 146, Average Loss 562.9978757991066
+Epoch 147, Average Loss 561.6113039919093
+Epoch 148, Average Loss 559.5665319237528
+Epoch 149, Average Loss 563.4297434408453
+Epoch 150, Average Loss 558.7135121973255
+Test Loss one_run: 317.71167359948157
+Test Loss all: 572.9695729851722
+Test Loss next_only: 76.69376263618469
+Epoch 151, Average Loss 559.3286987294125
+Epoch 152, Average Loss 556.1711987936044
+Epoch 153, Average Loss 556.1889681642568
+Epoch 154, Average Loss 565.510088312475
+Epoch 155, Average Loss 557.2457440457766
+Test Loss one_run: 321.8082217812538
+Test Loss all: 582.5627439141274
+Test Loss next_only: 77.20621719360352
+Epoch 156, Average Loss 555.6270044438446
+Epoch 157, Average Loss 554.5836485684672
+Epoch 158, Average Loss 556.7610998561111
+Epoch 159, Average Loss 557.4952136247973
+Epoch 160, Average Loss 550.0347678118114
+Test Loss one_run: 326.670246720314
+Test Loss all: 586.8672501683235
+Test Loss next_only: 77.23624448776245
+Epoch 161, Average Loss 549.5399043876913
+Epoch 162, Average Loss 554.5019134720669
+Epoch 163, Average Loss 553.3040269552907
+Epoch 164, Average Loss 551.6429812485659
+Epoch 165, Average Loss 546.8551996999149
+Test Loss one_run: 313.01682993173597
+Test Loss all: 564.3512197017669
+Test Loss next_only: 76.20407748222351
+Epoch 166, Average Loss 553.61933319629
+Epoch 167, Average Loss 550.5611294100556
+Epoch 168, Average Loss 548.6147357029251
+Epoch 169, Average Loss 562.797929831698
+Epoch 170, Average Loss 550.3030093953579
+Test Loss one_run: 315.2079160690308
+Test Loss all: 569.2117590546608
+Test Loss next_only: 76.12837853431702
+Epoch 171, Average Loss 545.5201487707186
+Epoch 172, Average Loss 550.5382162468343
+Epoch 173, Average Loss 546.4429408689089
+Epoch 174, Average Loss 539.6860350566574
+Epoch 175, Average Loss 549.4457345823698
+Test Loss one_run: 318.7885437309742
+Test Loss all: 576.7518856167793
+Test Loss next_only: 76.3777144730091
+Epoch 176, Average Loss 542.8201491048064
+Epoch 177, Average Loss 543.4464149799528
+Epoch 178, Average Loss 544.927327946017
+Epoch 179, Average Loss 543.972250419327
+Epoch 180, Average Loss 541.6901564975328
+Test Loss one_run: 319.3409453511238
+Test Loss all: 573.5876982450485
+Test Loss next_only: 76.67840126752853
+Epoch 181, Average Loss 548.5901952446261
+Epoch 182, Average Loss 549.8760139278219
+Epoch 183, Average Loss 538.8269402965715
+Epoch 184, Average Loss 539.3769164379639
+Epoch 185, Average Loss 542.7038887437386
+Test Loss one_run: 311.0219546675682
+Test Loss all: 568.9301983594894
+Test Loss next_only: 76.04833602309228
+Epoch 186, Average Loss 538.8571015113516
+Epoch 187, Average Loss 538.6871777667275
+Epoch 188, Average Loss 543.9097171554082
+Epoch 189, Average Loss 541.1098612486562
+Epoch 190, Average Loss 533.0833305799508
+Test Loss one_run: 321.1246755719185
+Test Loss all: 575.9243204116822
+Test Loss next_only: 76.59701488018035
+Epoch 191, Average Loss 539.9010456649563
+Epoch 192, Average Loss 538.8932424678078
+Epoch 193, Average Loss 539.3747562592542
+Epoch 194, Average Loss 535.4630389500268
+Epoch 195, Average Loss 535.706548748137
+Test Loss one_run: 315.855830514431
+Test Loss all: 560.8646515488624
+Test Loss next_only: 76.17730224728584
+Epoch 196, Average Loss 535.1188328341593
+Epoch 197, Average Loss 537.8252828151365
+Epoch 198, Average Loss 533.2784300906749
+Epoch 199, Average Loss 536.2183215618134
+Epoch 200, Average Loss 538.28343855882
+Test Loss one_run: 327.3421879649162
+Test Loss all: 579.7415663719178
+Test Loss next_only: 76.81556950211525
+Epoch 201, Average Loss 533.3771229092079
+Epoch 202, Average Loss 535.0251916571508
+Epoch 203, Average Loss 530.8863542517529
+Epoch 204, Average Loss 531.9872939179215
+Epoch 205, Average Loss 529.6178476071055
+Test Loss one_run: 317.2396663546562
+Test Loss all: 562.3093508601189
+Test Loss next_only: 76.26955280900002
+Epoch 206, Average Loss 532.0691647091999
+Epoch 207, Average Loss 533.8892372710795
+Epoch 208, Average Loss 541.2691831347308
+Epoch 209, Average Loss 529.8084866351719
+Epoch 210, Average Loss 533.216872355606
+Test Loss one_run: 309.65671142339704
+Test Loss all: 554.2855291485787
+Test Loss next_only: 75.7255737543106
+Epoch 211, Average Loss 530.3460080714166
+Epoch 212, Average Loss 528.1038741778724
+Epoch 213, Average Loss 528.5866523981094
+Epoch 214, Average Loss 529.8617353741126
+Epoch 215, Average Loss 533.511154712001
+Test Loss one_run: 324.62847181558607
+Test Loss all: 581.1375384926796
+Test Loss next_only: 76.55172742307187
+Epoch 216, Average Loss 524.8172307957577
+Epoch 217, Average Loss 529.6573392333863
+Epoch 218, Average Loss 535.5619315210777
+Epoch 219, Average Loss 526.1777419229097
+Epoch 220, Average Loss 526.7486319723008
+Test Loss one_run: 312.28213691115377
+Test Loss all: 556.9135168135166
+Test Loss next_only: 75.88135213255882
+Epoch 221, Average Loss 524.4341757614401
+Epoch 222, Average Loss 526.1995156346998
+Epoch 223, Average Loss 525.6096736524679
+Epoch 224, Average Loss 524.8868467656872
+Epoch 225, Average Loss 525.1007332409484
+Test Loss one_run: 312.17021030187607
+Test Loss all: 556.6503952622413
+Test Loss next_only: 75.89784828722478
+Epoch 226, Average Loss 524.116146116317
+Epoch 227, Average Loss 526.1610975416401
+Epoch 228, Average Loss 524.4921860543988
+Epoch 229, Average Loss 522.8462712870369
+Epoch 230, Average Loss 526.0421109622038
+Test Loss one_run: 319.2025808036327
+Test Loss all: 568.4180099844932
+Test Loss next_only: 76.27081857025624
+Epoch 231, Average Loss 523.8282485898537
+Epoch 232, Average Loss 522.3030388883398
+Epoch 233, Average Loss 520.2760367287865
+Epoch 234, Average Loss 523.8198611857016
+Epoch 235, Average Loss 522.5759546771834
+Test Loss one_run: 320.45379373431206
+Test Loss all: 565.0803035855294
+Test Loss next_only: 76.23636965751648
+Epoch 236, Average Loss 523.0527857934372
+Epoch 237, Average Loss 520.4193378204031
+Epoch 238, Average Loss 522.2595045385482
+Epoch 239, Average Loss 524.3014888808697
+Epoch 240, Average Loss 520.5669043124476
+Test Loss one_run: 313.67852466106416
+Test Loss all: 559.3621309876442
+Test Loss next_only: 76.03858469724655
+Epoch 241, Average Loss 523.9403877439378
+Epoch 242, Average Loss 523.1006074193158
+Epoch 243, Average Loss 517.6656253020975
+Epoch 244, Average Loss 521.9240635859816
+Epoch 245, Average Loss 519.6174589742589
+Test Loss one_run: 312.8026103377342
+Test Loss all: 558.2154489994049
+Test Loss next_only: 76.01554891467094
+Epoch 246, Average Loss 520.1700702649129
+Epoch 247, Average Loss 519.5322023464155
+Epoch 248, Average Loss 518.0263812700405
+Epoch 249, Average Loss 520.0301821910882
+Epoch 250, Average Loss 518.575549154342
+Test Loss one_run: 320.726575666666
+Test Loss all: 572.9112388014794
+Test Loss next_only: 76.45144362449646
+Epoch 251, Average Loss 517.6868212313592
+Epoch 252, Average Loss 520.98519356794
+Epoch 253, Average Loss 518.2440396426599
+Epoch 254, Average Loss 520.5383337373975
+Epoch 255, Average Loss 516.0075791289535
+Test Loss one_run: 314.5216722011566
+Test Loss all: 557.4675599336624
+Test Loss next_only: 76.02105483710766
+Epoch 256, Average Loss 518.3743702731555
+Epoch 257, Average Loss 516.3752913475037
+Epoch 258, Average Loss 518.0917774650115
+Epoch 259, Average Loss 519.2121256091926
+Epoch 260, Average Loss 515.2133585780482
+Test Loss one_run: 312.6305349707603
+Test Loss all: 557.1364534914494
+Test Loss next_only: 75.95453281402588
+Epoch 261, Average Loss 515.8458526994608
+Epoch 262, Average Loss 521.2771057267732
+Epoch 263, Average Loss 516.2914328409147
+Epoch 264, Average Loss 514.8043045046963
+Epoch 265, Average Loss 515.4863141910939
+Test Loss one_run: 314.7491830468178
+Test Loss all: 558.2822019219399
+Test Loss next_only: 76.08152474462986
+Epoch 266, Average Loss 516.0825716830507
+Epoch 267, Average Loss 517.156281845479
+Epoch 268, Average Loss 514.5236613840997
+Epoch 269, Average Loss 515.265158955055
+Epoch 270, Average Loss 513.6783995205843
+Test Loss one_run: 314.8443813085556
+Test Loss all: 556.4160892486573
+Test Loss next_only: 76.04155154824257
+Epoch 271, Average Loss 515.602310812926
+Epoch 272, Average Loss 515.8438519526131
+Epoch 273, Average Loss 515.5098152009747
+Epoch 274, Average Loss 514.9689898038213
+Epoch 275, Average Loss 513.3750816689262
+Test Loss one_run: 314.2775604724884
+Test Loss all: 557.4546240508556
+Test Loss next_only: 76.00710090994835
+Epoch 276, Average Loss 512.0769305153738
+Epoch 277, Average Loss 512.8579645805721
+Epoch 278, Average Loss 514.9930856484401
+Epoch 279, Average Loss 512.2844148527217
+Epoch 280, Average Loss 511.8987735313705
+Test Loss one_run: 315.91558881402017
+Test Loss all: 559.657645893097
+Test Loss next_only: 76.1084469616413
+Epoch 281, Average Loss 512.7655208638952
+Epoch 282, Average Loss 510.94047539747214
+Epoch 283, Average Loss 511.1243236955208
+Epoch 284, Average Loss 513.7446783826321
+Epoch 285, Average Loss 510.4711407785174
+Test Loss one_run: 314.1494408607483
+Test Loss all: 555.5431427955627
+Test Loss next_only: 76.02769762873649
+Epoch 286, Average Loss 511.45551160166536
+Epoch 287, Average Loss 511.35746982882296
+Epoch 288, Average Loss 512.9820647269864
+Epoch 289, Average Loss 509.58518967296504
+Epoch 290, Average Loss 510.71604442596436
+Test Loss one_run: 310.13676761984823
+Test Loss all: 551.5623933911323
+Test Loss next_only: 75.83811079859734
+Epoch 291, Average Loss 510.8411023103738
+Epoch 292, Average Loss 511.4254576148866
+Epoch 293, Average Loss 509.7120100380499
+Epoch 294, Average Loss 510.71071742757965
+Epoch 295, Average Loss 510.3015792958344
+Test Loss one_run: 312.8587040424347
+Test Loss all: 557.7967005670071
+Test Loss next_only: 76.00748449265957
+Epoch 296, Average Loss 508.46736366235757
+Epoch 297, Average Loss 509.10577769822714
+Epoch 298, Average Loss 509.80515783949744
+Epoch 299, Average Loss 509.31637430643735
+Epoch 300, Average Loss 508.2334591859504
+Test Loss one_run: 315.0351297557354
+Test Loss all: 559.1201033949852
+Test Loss next_only: 76.08783788084983
+Epoch 301, Average Loss 508.39277470111847
+Epoch 302, Average Loss 509.19689197178127
+Epoch 303, Average Loss 509.8908119065852
+Epoch 304, Average Loss 509.08410011967527
+Epoch 305, Average Loss 509.161015513577
+Test Loss one_run: 312.31137241125106
+Test Loss all: 554.0139523983001
+Test Loss next_only: 75.92326093316078
+Epoch 306, Average Loss 506.7052563428879
+Epoch 307, Average Loss 510.96837316283694
+Epoch 308, Average Loss 508.3681764331045
+Epoch 309, Average Loss 508.05587960496734
+Epoch 310, Average Loss 507.58982598177994
+Test Loss one_run: 313.6829388320446
+Test Loss all: 556.7651389360428
+Test Loss next_only: 75.98745558261871
+Epoch 311, Average Loss 506.1250124792509
+Epoch 312, Average Loss 507.40208087239085
+Epoch 313, Average Loss 508.23996801014187
+Epoch 314, Average Loss 508.27774896500983
+Epoch 315, Average Loss 508.8987460287311
+Test Loss one_run: 314.2046199142933
+Test Loss all: 557.3059603095055
+Test Loss next_only: 76.04242942929268
+Epoch 316, Average Loss 508.0228599460819
+Epoch 317, Average Loss 507.4000085863886
+Epoch 318, Average Loss 507.07515547094465
+Epoch 319, Average Loss 505.7898304598241
+Epoch 320, Average Loss 505.6306527098523
+Test Loss one_run: 314.7876989245415
+Test Loss all: 559.4292343258858
+Test Loss next_only: 76.08919839262963
+Epoch 321, Average Loss 505.06099225448656
+Epoch 322, Average Loss 505.7885635185845
+Epoch 323, Average Loss 506.83805616746974
+Epoch 324, Average Loss 505.5721183472042
+Epoch 325, Average Loss 506.6305446172062
+Test Loss one_run: 311.863115644455
+Test Loss all: 552.685974407196
+Test Loss next_only: 75.90543173551559
+Epoch 326, Average Loss 506.0857192670243
+Epoch 327, Average Loss 506.9661500182333
+Epoch 328, Average Loss 504.8786435097079
+Epoch 329, Average Loss 505.79697003998336
+Epoch 330, Average Loss 504.6931402849246
+Test Loss one_run: 314.3251699090004
+Test Loss all: 558.1332227945328
+Test Loss next_only: 76.04777144193649
+Epoch 331, Average Loss 506.69514930097364
+Epoch 332, Average Loss 506.941568220718
+Epoch 333, Average Loss 505.8161118105997
+Epoch 334, Average Loss 505.6481613192377
+Epoch 335, Average Loss 505.4941000334824
+Test Loss one_run: 312.1651947021484
+Test Loss all: 554.9500147759915
+Test Loss next_only: 75.95390379428864
+Epoch 336, Average Loss 503.79101771946193
+Epoch 337, Average Loss 505.7633738427223
+Epoch 338, Average Loss 503.583332939993
+Epoch 339, Average Loss 503.9493997051746
+Epoch 340, Average Loss 505.79355218742467
+Test Loss one_run: 312.25935716032984
+Test Loss all: 554.0260333061218
+Test Loss next_only: 75.93942323327065
+Epoch 341, Average Loss 504.7637827924535
+Epoch 342, Average Loss 505.4806253427192
+Epoch 343, Average Loss 503.72094379799273
+Epoch 344, Average Loss 505.4757075189035
+Epoch 345, Average Loss 504.5665696270858
+Test Loss one_run: 313.2179600954056
+Test Loss all: 554.7458776712417
+Test Loss next_only: 75.95775156617165
+Epoch 346, Average Loss 504.0521718535242
+Epoch 347, Average Loss 502.9768607646604
+Epoch 348, Average Loss 503.4957148621354
+Epoch 349, Average Loss 503.4906886951833
+Epoch 350, Average Loss 503.4713959874986
+Test Loss one_run: 314.5819749653339
+Test Loss all: 557.7668173670769
+Test Loss next_only: 76.0265311896801
+Epoch 351, Average Loss 503.21595591683933
+Epoch 352, Average Loss 502.4697745042511
+Epoch 353, Average Loss 503.7171407243874
+Epoch 354, Average Loss 502.04821672922446
+Epoch 355, Average Loss 503.3198968081535
+Test Loss one_run: 312.78423472642896
+Test Loss all: 554.5098080456257
+Test Loss next_only: 75.9302460104227
+Epoch 356, Average Loss 503.57421860513807
+Epoch 357, Average Loss 504.245661014243
+Epoch 358, Average Loss 502.8250874809072
+Epoch 359, Average Loss 503.95402555526056
+Epoch 360, Average Loss 502.6116325040407
+Test Loss one_run: 313.16339402794836
+Test Loss all: 555.621112716198
+Test Loss next_only: 75.96551788449287
+Epoch 361, Average Loss 503.0187789850597
+Epoch 362, Average Loss 503.0046342264248
+Epoch 363, Average Loss 502.3627542664733
+Epoch 364, Average Loss 502.4532599403888
+Epoch 365, Average Loss 501.4273195055467
+Test Loss one_run: 314.15653544664383
+Test Loss all: 556.7322800040245
+Test Loss next_only: 75.99873312413692
+Epoch 366, Average Loss 503.5760632828821
+Epoch 367, Average Loss 502.3553906151011
+Epoch 368, Average Loss 501.6964494110663
+Epoch 369, Average Loss 503.0462319534036
+Epoch 370, Average Loss 501.9510422990292
+Test Loss one_run: 312.72144985198975
+Test Loss all: 555.528685593605
+Test Loss next_only: 75.94564770758151
+Epoch 371, Average Loss 501.5894448093221
+Epoch 372, Average Loss 501.17914198772814
+Epoch 373, Average Loss 501.93242731728134
+Epoch 374, Average Loss 500.47587945491455
+Epoch 375, Average Loss 500.7297210602821
+Test Loss one_run: 312.88255990147593
+Test Loss all: 555.506507384777
+Test Loss next_only: 75.94732023775578
+Epoch 376, Average Loss 501.4992249389238
+Epoch 377, Average Loss 501.7013079637214
+Epoch 378, Average Loss 500.6361544539657
+Epoch 379, Average Loss 501.18181574344635
+Epoch 380, Average Loss 501.33307203914546
+Test Loss one_run: 314.5143983364105
+Test Loss all: 557.8806556105613
+Test Loss next_only: 76.02613869905471
+Epoch 381, Average Loss 500.7685464530052
+Epoch 382, Average Loss 501.5712823928157
+Epoch 383, Average Loss 501.4032478483417
+Epoch 384, Average Loss 500.5556786422488
+Epoch 385, Average Loss 501.09215418145624
+Test Loss one_run: 312.4321398973465
+Test Loss all: 554.1786516189575
+Test Loss next_only: 75.923006772995
+Epoch 386, Average Loss 500.3967171635809
+Epoch 387, Average Loss 500.43044179602515
+Epoch 388, Average Loss 500.44803770886193
+Epoch 389, Average Loss 500.96309171749067
+Epoch 390, Average Loss 500.17504230782953
+Test Loss one_run: 314.2573463082314
+Test Loss all: 556.9856479048728
+Test Loss next_only: 76.01370552778243
+Epoch 391, Average Loss 500.54373459574543
+Epoch 392, Average Loss 500.6792271288135
+Epoch 393, Average Loss 500.06654094442536
+Epoch 394, Average Loss 499.60012994838667
+Epoch 395, Average Loss 499.87430924403515
+Test Loss one_run: 313.4281101644039
+Test Loss all: 555.7734342575073
+Test Loss next_only: 75.97223848998547
+Epoch 396, Average Loss 499.9777249339261
+Epoch 397, Average Loss 500.0427734716029
+Epoch 398, Average Loss 500.10572015635574
+Epoch 399, Average Loss 499.9621312633345
+Test Loss one_run: 313.70990414619445
+Test Loss all: 555.5856198310852
+Test Loss next_only: 75.96654986441135
