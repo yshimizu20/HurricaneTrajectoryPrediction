@@ -1,0 +1,11 @@
+                                  one_run              all       next_only
+RungeKutta4, autograd       (262.089, 50)    (539.792, 50)    (62.882, 40)
+RungeKutta4, adjoint        (301.695, 15)    (637.713, 15)    (46.683, 15)
+DormandPrince45, adjoint    (335.383, 35)   (1030.119, 65)    (71.260, 15)
+Tsitouras45, adjoint       (384.867, 115)   (709.616, 150)    (87.235, 25)
+Tsitouras45, autograd      (388.782, 365)   (645.367, 250)   (77.957, 400)
+midpoint, autograd         (409.978, 385)   (701.146, 155)    (87.806, 55)
+euler, adjoint             (450.258, 340)   (648.686, 115)   (91.683, 390)
+euler, autograd             (452.290, 90)    (722.552, 55)   (104.315, 90)
+midpoint, adjoint           (511.959, 70)  (1049.561, 150)  (112.104, 400)
+DormandPrince45, autograd   (530.311, 60)  (1003.788, 180)   (100.513, 95)
