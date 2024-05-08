@@ -1,18 +1,3 @@
-<h1>Testing Evaluation Metric</h1>
-
-| Experiment Type             |           one_run            |                all               |          next_only         |
-|-----------------------------|:----------------------------:|:--------------------------------:|:--------------------------:|
-| one_run_with_discount, adjoint|        (204.057, 10)       |             (479.940, 10)       |        (40.834, 15)       |
-| all_with_discount, adjoint  |          (300.513, 90)      |            (491.818, 125)       |       (60.685, 235)       |
-| all, adjoint                |          (306.988, 65)      |            (551.562, 290)       |       (75.726, 210)       |
-| all_with_discount, autograd |          (320.790, 40)      |            (725.789, 100)       |        (43.146, 25)       |
-| one_run, autograd           |         (340.196, 110)      |            (572.202, 115)       |       (71.155, 395)       |
-| one_run_with_discount, autograd|     (344.422, 55)         |           (1095.972, 15)        |        (78.034, 30)       |
-| one_run, adjoint            |         (415.506, 395)      |           (1004.670, 55)        |       (81.891, 400)       |
-| all, autograd               |          (502.975, 90)      |            (559.443, 90)        |      (108.473, 390)       |
-| next_only, adjoint          |           (1035.950, 25)    |             (1422.917, 20)      |        (67.715, 30)       |
-| next_only, autograd         | (1e17, 215)| (1e18, 270) |       (64.409, 120)       |
-
 <h1>Testing (sensitivity, solver) pairs</h1>
 
 | Experiment Type             |          one_run           |              all             |         next_only         |
@@ -73,3 +58,19 @@
 | euler, RungeKutta4, autograd               |     (521.825, 370)         |      (1006.159, 25)        |      (100.135, 30)      |
 | euler, Tsitouras45, autograd               |     (541.267, 380)         |      (1060.588, 20)        |      (100.123, 10)      |
 | Tsitouras45, DormandPrince45, adjoint      |     (607.639, 250)         |      (1014.677, 20)        |      (122.620, 335)     |
+
+<h1>Testing Loss Heuristics</h1>
+
+| Experiment Type             |           one_run            |                all               |          next_only         |
+|-----------------------------|:----------------------------:|:--------------------------------:|:--------------------------:|
+| one_run_with_discount, adjoint|        (204.057, 10)       |             (479.940, 10)       |        (40.834, 15)       |
+| all_with_discount, adjoint  |          (300.513, 90)      |            (491.818, 125)       |       (60.685, 235)       |
+| all, adjoint                |          (306.988, 65)      |            (551.562, 290)       |       (75.726, 210)       |
+| all_with_discount, autograd |          (320.790, 40)      |            (725.789, 100)       |        (43.146, 25)       |
+| one_run, autograd           |         (340.196, 110)      |            (572.202, 115)       |       (71.155, 395)       |
+| one_run_with_discount, autograd|     (344.422, 55)         |           (1095.972, 15)        |        (78.034, 30)       |
+| one_run, adjoint            |         (415.506, 395)      |           (1004.670, 55)        |       (81.891, 400)       |
+| all, autograd               |          (502.975, 90)      |            (559.443, 90)        |      (108.473, 390)       |
+| next_only, adjoint          |           (1035.950, 25)    |             (1422.917, 20)      |        (67.715, 30)       |
+| next_only, autograd         | (1e17, 215)| (1e18, 270) |       (64.409, 120)       |
+
