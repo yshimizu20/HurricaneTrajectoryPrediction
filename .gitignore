@@ -161,5 +161,4 @@ cython_debug/
 HURSAT_Imagery/
 lightning_logs/
 saved_models/
-logs/
 logs_old/
