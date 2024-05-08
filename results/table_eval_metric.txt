@@ -1,6 +1,4 @@
                                                        one_run                             all       next_only
-next_only, autograd              (101668998438952608.000, 215)  (1030731350024395136.000, 270)   (64.409, 120)
-next_only, adjoint                              (1035.950, 25)                  (1422.917, 20)    (67.715, 30)
 one_run_with_discount, adjoint                   (204.057, 10)                   (479.940, 10)    (40.834, 15)
 all_with_discount, adjoint                       (300.513, 90)                  (491.818, 125)   (60.685, 235)
 all, adjoint                                     (306.988, 65)                  (551.562, 290)   (75.726, 210)
@@ -9,3 +7,5 @@ one_run, autograd                               (340.196, 110)                  
 one_run_with_discount, autograd                  (344.422, 55)                  (1095.972, 15)    (78.034, 30)
 one_run, adjoint                                (415.506, 395)                  (1004.670, 55)   (81.891, 400)
 all, autograd                                    (502.975, 90)                   (559.443, 90)  (108.473, 390)
+next_only, adjoint                              (1035.950, 25)                  (1422.917, 20)    (67.715, 30)
+next_only, autograd              (1e17, 215)  (1e18.000, 270)   (64.409, 120)
