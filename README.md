@@ -21,11 +21,11 @@ Each of the following scripts can be run concurrently. Training will take a long
 
 ```bash
 # time to run: 15 hours / number of cores
-python3 train_ode_sensitivity.py
+python3 train_ode_sensitivity.py > table_sensitivity.txt
 # time to run: 60 hours / number of cores
-python3 train_ode_combined.py
+python3 train_ode_combined.py > table_combined.txt
 # time to run: 30 hours / number of cores
-python3 train_ode_eval_metric.py
+python3 train_ode_eval_metric.py > table_eval_metric.txt
 ```
 
 <h5>Parse results</h5>
